@@ -1,0 +1,3224 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
+    <title>GMS FINISH FABRIC MCD V-2.6</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GMS COMPOSITE KNITTING IND LTD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<!-- Firebase SDK -->
+<script type="module">
+    // ########## START: MODIFICATION FOR FASTER LOAD ##########
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+import { getDatabase, ref, set, get, push, update, onValue, off, runTransaction, query, limitToLast, orderByChild, equalTo } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+// নতুন Authentication মডিউল যোগ করা হলো
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js';
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBUINgluC-vWKZeak0Nag1CulnivUUgm6A",
+    authDomain: "finish-fabrics.firebaseapp.com",
+    databaseURL: "https://finish-fabrics-default-rtdb.firebaseio.com",
+    projectId: "finish-fabrics",
+    storageBucket: "finish-fabrics.firebasestorage.app",
+    messagingSenderId: "777164214749",
+    appId: "1:777164214749:web:2290ee3ca7dfd3a094a634",
+    measurementId: "G-DL4Y6D1QGP"
+};
+
+const app = initializeApp(firebaseConfig);
+window.database = getDatabase(app);
+window.dbRef = ref;
+window.dbSet = set;
+window.dbGet = get;
+window.dbPush = push;
+window.dbUpdate = update;
+window.dbOnValue = onValue;
+window.dbOff = off;
+window.dbRunTransaction = runTransaction;
+// নতুন কুয়েরি ফাংশনগুলো গ্লোবাল করা হলো
+window.dbQuery = query;
+window.dbLimitToLast = limitToLast;
+window.dbOrderByChild = orderByChild;
+window.dbEqualTo = equalTo;
+
+// Firebase Auth ইনিশিয়ালাইজেশন
+window.auth = getAuth(app);
+window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+window.signOut = signOut;
+window.onAuthStateChanged = onAuthStateChanged;
+// ########## END: MODIFICATION FOR FASTER LOAD ##########
+    </script>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #059669;
+            --secondary: #1f2937;
+            --borderColor: #e5e7eb;
+            --textSecondary: #6b7280;
+        }
+        
+        .bg-primary { background-color: var(--primary); }
+        .text-primary { color: var(--primary); }
+        .text-secondary { color: var(--secondary); }
+        .text-textSecondary { color: var(--textSecondary); }
+        .border-borderColor { border-color: var(--borderColor); }
+        
+        .table-container {
+            max-height: 500px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        
+        .recent-challans-table {
+            max-height: 400px;
+            overflow-y: auto;
+            overflow-x: auto;
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .hover-row:hover {
+            background-color: #f9fafb;
+        }
+        
+        .table-row-even {
+            background-color: #D6EEEE;
+        }
+        
+        .table-row-odd {
+            background-color: #ffffff;
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+        
+        .additional-notes {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+        }
+        
+        .additional-notes label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: var(--secondary);
+        }
+        
+        .additional-notes textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            resize: vertical;
+            font-family: inherit;
+        }
+        /* Custom style for currency select dropdown */
+        .currency-select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: white;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+<!-- Login Screen -->
+<div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-blue-50">
+    <div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md border border-borderColor">
+        <div class="text-center mb-8">
+            <div class="w-20 h-20 bg-primary rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold text-secondary mb-2">GMS COMPOSITE KNITTING IND LTD</h1>
+            <p class="text-textSecondary">Finish Fabric MCD System</p>
+        </div>
+        
+        <form onsubmit="signIn(event)" class="space-y-6">
+            <div>
+                <label class="block text-sm font-medium text-secondary mb-2">ইমেল ঠিকানা</label>
+                <input 
+                    type="email" 
+                    id="emailInput" 
+                    placeholder="ইমেল ঠিকানা লিখুন..." 
+                    required 
+                    class="w-full px-4 py-3 border border-borderColor rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-lg"
+                    autocomplete="email"
+                >
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-secondary mb-2">পাসওয়ার্ড</label>
+                <input 
+                    type="password" 
+                    id="passwordInput" 
+                    placeholder="পাসওয়ার্ড লিখুন..." 
+                    required 
+                    class="w-full px-4 py-3 border border-borderColor rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent text-lg"
+                    autocomplete="current-password"
+                >
+            </div>
+            
+            <div id="errorMessage" class="hidden text-red-600 text-sm text-center bg-red-50 p-3 rounded-lg">
+                ভুল ইমেল বা পাসওয়ার্ড! আবার চেষ্টা করুন।
+            </div>
+            
+            <button 
+                type="submit" 
+                class="w-full bg-primary text-white py-3 px-4 rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium text-lg"
+            >
+                লগইন করুন
+            </button>
+        </form>
+        
+        <div class="text-center mt-6 pt-6 border-t border-borderColor">
+            <p class="text-xs text-textSecondary">
+                Developed by: <span class="font-semibold text-primary">S@ju.<sup class="text-xs">TM</sup></span>
+            </p>
+        </div>
+    </div>
+</div>  
+  <!-- Main Application (Hidden by default) -->
+    <div id="mainApplication" class="w-full px-6 py-6 hidden">
+        <!-- Header -->
+        <div class="mb-8 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold text-secondary mb-2">GMS COMPOSITE KNITTING IND LTD</h1>
+                <p class="text-textSecondary">Manage your fabric MCD, challans, and issue reports</p>
+            </div>
+            <button onclick="logout()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors duration-200 flex items-center space-x-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                </svg>
+                <span>লগআউট</span>
+            </button>
+        </div>
+
+        <!-- Create New Challan -->
+        <div class="bg-white rounded-xl shadow-sm border border-borderColor">
+            <div class="p-6 border-b border-borderColor">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-lg font-semibold text-secondary">Create New Challan</h3>
+                    <div id="editModeIndicator" class="hidden px-4 py-2 bg-yellow-100 text-yellow-800 rounded-lg font-medium">
+                        Edit Mode: <span id="editingChallanNumber"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-6">
+                <form id="challanForm" onsubmit="createChallan(event)">
+                    <!-- Challan Information -->
+                    <div class="mb-6">
+                        <h4 class="text-lg font-semibold text-secondary mb-4">Challan Information</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-secondary mb-1">Challan Number (Auto-Generated)</label>
+                                <input type="text" id="challanNumber" readonly class="w-full px-3 py-2 border border-borderColor rounded-lg bg-gray-50 text-textSecondary">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-secondary mb-1">Invoice Date</label>
+                                <input type="date" id="invoiceDate" required class="w-full px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-secondary mb-1">Receiver Name</label>
+                                <input type="text" id="receiverName" required class="w-full px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-secondary mb-1">Issue To</label>
+                                <input type="text" id="issueTo" list="issueToList" onchange="toggleGmsFields()" oninput="toggleGmsFields()" required class="w-full px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent" placeholder="Select or type issue destination">
+                                <datalist id="issueToList">
+                                    <option value="Cutting 01">
+                                    <option value="Cutting 02">
+                                    <option value="Cutting 03">
+                                    <option value="Cutting 04">
+                                    <option value="Cutting 05">
+                                    <option value="Unit - 2 (Cutting 06)">
+                                    <option value="Unit - 2 (Cutting 07)">
+                                    <option value="Gms Textiles Ltd">
+                                    <option value="Sewing Department">
+                                    <option value="Finishing Department">
+                                    <option value="AOP">
+                                    <option value="Dyeing Return">
+                                    <option value="Sample Department">
+                                </datalist>
+                            </div>
+                        </div>
+                        
+                        <!-- Contact Number -->
+                        <div class="mb-6">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-secondary mb-1">Contact Number</label>
+                                    <input type="tel" id="contactNumber" class="w-full px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent" placeholder="Enter contact number">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Transport & Delivery Details -->
+                        <div id="gmsTextileFields" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-6 p-6 bg-blue-50 border-2 border-blue-200 rounded-xl hidden">
+                            <div class="xl:col-span-2">
+                                <label class="block text-base font-semibold text-secondary mb-2">🏢 Party Address</label>
+                                <textarea id="partyAddress" placeholder="Enter party address" rows="3" class="w-full px-4 py-3 text-base border-2 border-borderColor rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent resize-none transition-all duration-200"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-base font-semibold text-secondary mb-2">👨‍💼 Driver Name</label>
+                                <input type="text" id="driverName" placeholder="Enter driver name" class="w-full px-4 py-3 text-base border-2 border-borderColor rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
+                            </div>
+                            <div>
+                                <label class="block text-base font-semibold text-secondary mb-2">🚛 Vehicle No</label>
+                                <input type="text" id="vehicleNo" placeholder="Enter vehicle number" class="w-full px-4 py-3 text-base border-2 border-borderColor rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
+                            </div>
+                            <div>
+                                <label class="block text-base font-semibold text-secondary mb-2">🎫 Gate Pass No</label>
+                                <input type="text" id="gatePassNo" placeholder="Enter gate pass number" class="w-full px-4 py-3 text-base border-2 border-borderColor rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
+                            </div>
+                            <div>
+                                <label class="block text-base font-semibold text-secondary mb-2">🔒 Lock No</label>
+                                <input type="text" id="lockNo" placeholder="Enter lock number" class="w-full px-4 py-3 text-base border-2 border-borderColor rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Fabric Items -->
+                    <div class="mb-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h4 class="text-lg font-semibold text-secondary">Fabric Items</h4>
+                            <div class="flex items-center space-x-4">
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" id="toggleRateAmount" onchange="toggleRateAmountColumns()" class="rounded">
+                                    <span class="text-sm text-secondary">Show Rate & Amount</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" id="showGreyQtyInPrint" class="rounded" checked>
+                                    <span class="text-sm text-secondary">Show Grey Qty in Print</span>
+                                </label>
+                                <label class="flex items-center space-x-2">
+                                    <input type="checkbox" id="showSubtotalInPrint" class="rounded" checked>
+                                    <span class="text-sm text-secondary">Show Subtotal in Print</span>
+                                </label>
+                                <button type="button" onclick="addFabricItem()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center space-x-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                                    </svg>
+                                    <span>Add Item</span>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div class="overflow-x-auto w-full">
+                            <table id="fabricItemsTable" style="font-family: arial, sans-serif; border-collapse: collapse; width: 100%; min-width: 1600px;">
+                                <thead>
+                                    <tr>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Issue Type</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Buyer</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Store Ref.</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Certification</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Dia</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">F/Type</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">GSM</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Color</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Batch No</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Location</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">No of Roll</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">UOM</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Grey Qty</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Issue Qty</th>
+                                        <th id="rateHeader" class="rate-cell" style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold; display: none;">Rate</th>
+                                        <th id="amountHeader" class="amount-cell" style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold; display: none;">Amount</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Remarks</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 12px; background-color: black; color: white; font-weight: bold;">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="18" style="border: 1px solid #dddddd; text-align: center; padding: 20px; color: #666;">
+                                            No items added. Click "Add Item" to start.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <!-- ########## START: MODIFICATION FOR GRAND TOTAL ########## -->
+                                <tfoot>
+                                    <tr style="background-color: #1f2937; color: white; font-weight: bold; font-size: 1.1em;">
+                                        <th colspan="10" style="border: 1px solid #dddddd; text-align: right; padding: 12px;">Grand Total</th>
+                                        <th id="totalRolls" style="border: 1px solid #dddddd; text-align: center; padding: 12px;">0</th>
+                                        <th style="border: 1px solid #dddddd; padding: 12px;"></th> <!-- UOM -->
+                                        <th id="totalGreyQty" style="border: 1px solid #dddddd; text-align: right; padding: 12px;">0.00</th>
+                                        <th id="totalIssueQty" style="border: 1px solid #dddddd; text-align: right; padding: 12px;">0.00</th>
+                                        <th class="rate-cell" style="border: 1px solid #dddddd; display: none;"></th> <!-- Rate -->
+                                        <th id="totalAmount" class="amount-cell" style="border: 1px solid #dddddd; text-align: right; padding: 12px; display: none;">0.00</th>
+                                        <th colspan="2" style="border: 1px solid #dddddd;"></th> <!-- Remarks, Action -->
+                                    </tr>
+                                </tfoot>
+                                <!-- ########## END: MODIFICATION FOR GRAND TOTAL ########## -->
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Additional Notes Section -->
+                    <div id="additionalNotesSection" class="additional-notes hidden">
+                        <label for="additionalNotes">Additional Notes (Will appear in Print/Bill/PDF):</label>
+                        <textarea id="additionalNotes" placeholder="Enter any additional notes or remarks that should appear in the print/bill/PDF..."></textarea>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="flex justify-end">
+                        <button type="submit" id="submitButton" class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium">
+                            Create Challan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Search Challan -->
+        <div class="bg-white rounded-xl shadow-sm border border-borderColor mb-8">
+            <div class="p-6 border-b border-borderColor">
+                <h3 class="text-lg font-semibold text-secondary">Search & Edit Challan</h3>
+            </div>
+            <div class="p-6">
+                <div class="flex space-x-4">
+                    <div class="flex-1 max-w-md">
+                        <input type="text" id="searchChallanNumber" placeholder="Enter Challan Number (e.g., GMS-25-000001)" class="w-full px-4 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent">
+                    </div>
+                    <button onclick="searchChallan()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 flex items-center space-x-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                        <span>Search</span>
+                    </button>
+                    <button onclick="clearForm()" class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors duration-200">
+                        Clear Form
+                    </button>
+                </div>
+                <div id="searchStatus" class="mt-4 text-sm"></div>
+            </div>
+        </div>
+
+        <!-- Recent Challans -->
+        <div class="bg-white rounded-xl shadow-sm border border-borderColor mb-8">
+            <!-- ########## START: MODIFICATION FOR RECENT CHALLAN SEARCH ########## -->
+            <div class="p-6 border-b border-borderColor">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                    <h3 class="text-lg font-semibold text-secondary">Recent Challans</h3>
+                    <div class="flex items-center">
+                        <input type="text" id="recentChallanSearchInput" oninput="updateChallansTable()" placeholder="চালান নাম্বার দিয়ে সার্চ করুন..." class="w-full sm:w-64 px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent text-sm">
+                    </div>
+                </div>
+            </div>
+            <!-- ########## END: MODIFICATION FOR RECENT CHALLAN SEARCH ########## -->
+            
+            <div class="recent-challans-table">
+                <table class="min-w-full">
+                    <thead class="sticky top-0">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Challan No</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Receiver</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Issue To</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Items</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Date</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="challansTable">
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-textSecondary">
+                                No challans found. Create a new challan.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- ########## START: MODIFICATION FOR REPORT BUTTON ########## -->
+        <!-- Button to toggle the report -->
+        <div class="my-8 text-center">
+            <button onclick="toggleIssueReport()" id="toggleReportButton" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors duration-200 font-medium">
+                Show Issue-wise Report
+            </button>
+        </div>
+        
+        <!-- Issue-wise Detailed Report Container (hidden by default) -->
+        <div id="issueReportContainer" class="hidden">
+            <div class="bg-white rounded-xl shadow-sm border border-borderColor mb-8">
+                <div class="p-6 border-b border-borderColor">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center space-y-4 md:space-y-0">
+                        <h3 class="text-lg font-semibold text-secondary">Issue-wise Detailed Report</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <select id="issueDestinationFilter" onchange="applyFilters()" class="px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent text-sm">
+                                <option value="">All Issue Destinations</option>
+                                <option value="Cutting 01">Cutting 01</option>
+                                <option value="Cutting 02">Cutting 02</option>
+                                <option value="Cutting 03">Cutting 03</option>
+                                <option value="Cutting 04">Cutting 04</option>
+                                <option value="Cutting 05">Cutting 05</option>
+                                <option value="Unit - 2 (Cutting 06)">Unit - 2 (Cutting 06)</option>
+                                <option value="Unit - 2 (Cutting 07)">Unit - 2 (Cutting 07)</option>
+                                <option value="Gms Textiles Ltd">Gms Textiles Ltd</option>
+                                <option value="Sewing Department">Sewing Department</option>
+                                <option value="Finishing Department">Finishing Department</option>
+                                <option value="AOP">AOP</option>
+                                <option value="Dyeing Return">Dyeing Return</option>
+                                <option value="Sample Department">Sample Department</option>
+                            </select>
+                            <select id="dateRangeFilter" onchange="handleDateRangeChange()" class="px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent text-sm">
+                                <option value="">All Dates</option>
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="last7days">Last 7 Days</option>
+                                <option value="last30days">Last 30 Days</option>
+                                <option value="thisMonth">This Month</option>
+                                <option value="lastMonth">Last Month</option>
+                                <option value="custom">Custom Range</option>
+                            </select>
+                            <div id="customDateRange" class="hidden flex gap-2">
+                                <input type="date" id="startDate" onchange="applyFilters()" class="px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent text-sm" placeholder="Start Date">
+                                <input type="date" id="endDate" onchange="applyFilters()" class="px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent text-sm" placeholder="End Date">
+                            </div>
+                            <button onclick="clearAllFilters()" class="px-3 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 text-sm">
+                                Clear
+                            </button>
+                            <button onclick="exportIssueReport()" class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-green-700 transition-colors duration-200 flex items-center space-x-2 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                <span>Export Report</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="table-container">
+                    <table class="min-w-full">
+                        <thead class="sticky top-0">
+                            <tr>
+                                <!-- ########## START: REPORT MODIFICATION ########## -->
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Issue Destination</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Issue Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Buyer</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Store Ref.</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Fabric Type</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Color</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Rolls</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Issue Qty</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">UOM</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Challan No</th>
+                                <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider bg-black">Date</th>
+                                <!-- ########## END: REPORT MODIFICATION ########## -->
+                            </tr>
+                        </thead>
+                        <tbody id="issueReportTable">
+                            <tr>
+                                <!-- ########## START: REPORT MODIFICATION ########## -->
+                                <td colspan="11" class="px-6 py-8 text-center text-textSecondary">
+                                    No data available. Create some challans to see the report.
+                                </td>
+                                <!-- ########## END: REPORT MODIFICATION ########## -->
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!-- ########## END: MODIFICATION FOR REPORT BUTTON ########## -->
+
+        <!-- Real-time Update Notification -->
+        <div id="updateNotification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-x-full transition-transform duration-300 z-50 hidden">
+            <div class="flex items-center space-x-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                <span>ডেটা আপডেট হয়েছে!</span>
+            </div>
+        </div>
+
+        <!-- Connection Status -->
+        <div id="connectionStatus" class="fixed bottom-4 right-4 px-4 py-2 rounded-lg text-sm font-medium z-40">
+            <div class="flex items-center space-x-2">
+                <div id="connectionIndicator" class="w-3 h-3 rounded-full bg-green-500"></div>
+                <span id="connectionText">Connected</span>
+            </div>
+        </div>
+
+        <!-- Developer Credit -->
+        <div class="text-center py-4 border-t border-borderColor mt-8">
+            <p class="text-sm text-textSecondary">
+                Developed by: <span class="font-semibold text-primary">S@ju.<sup class="text-xs">TM</sup></span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Datalists -->
+    <datalist id="issueTypeList">
+        <option value="Issue">
+        <option value="Return">
+        <option value="Transfer">
+        <option value="Short">
+        <option value="Additional">
+        <option value="Sample">
+        <option value="Bulk">
+        <option value="Sale">
+        <option value="Repairing">
+        <option value="Change">
+        <option value="Rent">
+        <option value="Replace">
+        <option value="Gift">
+        <option value="Storage">
+        <option value="Usage">
+        <option value="Servicing">
+        <option value="Refilling">
+        <option value="Subcontact">
+        <option value="Shipment">
+        <option value="For Work">
+    </datalist>
+
+    <datalist id="certificationList">
+        <option value="OEKO-TEX">
+        <option value="GOTS">
+        <option value="BCI">
+        <option value="None">
+    </datalist>
+
+    <datalist id="fabricTypeList">
+        <option value="Cotton">
+        <option value="Polyester">
+        <option value="Blend">
+        <option value="Silk">
+        <option value="Linen">
+    </datalist>
+
+    <datalist id="locationList">
+        <option value="A-01">
+        <option value="A-02">
+        <option value="B-01">
+        <option value="B-02">
+    </datalist>
+
+    <datalist id="uomList">
+        <option value="Yards">
+        <option value="Meters">
+        <option value="KG">
+    </datalist>
+
+    <script>
+// Global variables
+let challanCounter = 1;
+let itemCounter = 1;
+let challans = [];
+let fabricItems = [];
+let isEditMode = false;
+let editingChallanId = null;
+let billCounter = 1;
+let challansListener = null;
+let counterListener = null;
+
+// Check if user is already logged in
+function checkLoginStatus() {
+    // Firebase Auth স্টেট পরিবর্তন লিসেনার
+    window.onAuthStateChanged(window.auth, (user) => {
+        if (user) {
+            // User is signed in
+            showMainApplication();
+        } else {
+            // User is signed out
+            showLoginScreen();
+        }
+    });
+}
+
+// Firebase Auth দিয়ে সাইন ইন ফাংশন
+function signIn(event) {
+    event.preventDefault();
+    
+    const emailInput = document.getElementById('emailInput');
+    const passwordInput = document.getElementById('passwordInput');
+    const errorMessage = document.getElementById('errorMessage');
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    // লোডিং স্টেট দেখানো
+    const submitButton = event.target.querySelector('button[type="submit"]');
+    const originalButtonText = submitButton.textContent;
+    submitButton.textContent = "লগইন হচ্ছে...";
+    submitButton.disabled = true;
+    
+    window.signInWithEmailAndPassword(window.auth, email, password)
+        .then((userCredential) => {
+            // Signed in successfully
+            errorMessage.classList.add('hidden');
+            emailInput.value = '';
+            passwordInput.value = '';
+        })
+        .catch((error) => {
+            // Error occurred
+            console.error("Login error:", error);
+            errorMessage.classList.remove('hidden');
+            passwordInput.value = '';
+            passwordInput.focus();
+            
+            // Shake animation
+            passwordInput.style.animation = 'shake 0.5s';
+            setTimeout(() => {
+                passwordInput.style.animation = '';
+            }, 500);
+        })
+        .finally(() => {
+            // বাটন আগের অবস্থায় ফিরিয়ে আনা
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+        });
+}
+
+// Show login screen
+function showLoginScreen() {
+    document.getElementById('loginScreen').classList.remove('hidden');
+    document.getElementById('mainApplication').classList.add('hidden');
+    document.getElementById('emailInput').focus();
+}
+
+// Show main application
+function showMainApplication() {
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('mainApplication').classList.remove('hidden');
+    
+    // Initialize system only after login
+    initializeSystem();
+}
+
+// Logout function
+function logout() {
+    if (confirm('আপনি কি লগআউট করতে চান?')) {
+        // Clear any listeners
+        if (challansListener) {
+            const challansRef = window.dbRef(window.database, 'challans');
+            window.dbOff(challansRef, 'value', challansListener);
+            challansListener = null;
+        }
+        if (counterListener) {
+            const counterRef = window.dbRef(window.database, 'challanCounter');
+            window.dbOff(counterRef, 'value', counterListener);
+            counterListener = null;
+        }
+        
+        // Firebase Auth দিয়ে সাইন আউট
+        window.signOut(window.auth).catch((error) => {
+            console.error("Logout error:", error);
+        });
+    }
+}
+        // Initialize the system
+        async function initializeSystem() {
+            await loadBillCounter();
+            setCurrentDate();
+            setupRealtimeListener();
+            setupCounterListener(); // <-- NEW: Setup the real-time listener for the counter
+        }
+
+        // <-- NEW: This function sets up a real-time listener for the challan counter
+        function setupCounterListener() {
+            try {
+                const counterRef = window.dbRef(window.database, 'challanCounter');
+                
+                // Remove existing listener if any
+                if (counterListener) {
+                    window.dbOff(counterRef, 'value', counterListener);
+                }
+                
+                // Set up new listener
+                counterListener = window.dbOnValue(counterRef, (snapshot) => {
+                    if (snapshot.exists()) {
+                        challanCounter = snapshot.val();
+                    } else {
+                        // If counter doesn't exist in DB, initialize it
+                        window.dbSet(counterRef, 1);
+                        challanCounter = 1;
+                    }
+                    // Regenerate the challan number in the UI, but only if not in edit mode
+                    if (!isEditMode) {
+                        generateChallanNumber();
+                    }
+                }, (error) => {
+                    console.error('Error in counter listener:', error);
+                });
+            } catch (error) {
+                console.error('Error setting up counter listener:', error);
+            }
+        }
+
+        // Load challan counter from Firebase (This is now mainly for initialization if needed)
+        async function loadChallanCounter() {
+            try {
+                const counterRef = window.dbRef(window.database, 'challanCounter');
+                const snapshot = await window.dbGet(counterRef);
+                if (snapshot.exists()) {
+                    challanCounter = snapshot.val();
+                } else {
+                    await window.dbSet(counterRef, 1);
+                    challanCounter = 1;
+                }
+            } catch (error) {
+                console.error('Error loading challan counter:', error);
+                challanCounter = 1;
+            }
+        }
+
+        // Update challan counter in Firebase
+        async function updateChallanCounter() {
+            try {
+                // The new value should be the current challanCounter value, which is fetched in real-time
+                const nextChallanNumber = challanCounter + 1;
+                const counterRef = window.dbRef(window.database, 'challanCounter');
+                await window.dbSet(counterRef, nextChallanNumber);
+            } catch (error) {
+                console.error('Error updating challan counter:', error);
+            }
+        }
+
+        // Load bill counter from Firebase
+        async function loadBillCounter() {
+            try {
+                const counterRef = window.dbRef(window.database, 'billCounter');
+                const snapshot = await window.dbGet(counterRef);
+                if (snapshot.exists()) {
+                    billCounter = snapshot.val();
+                } else {
+                    await window.dbSet(counterRef, 1);
+                    billCounter = 1;
+                }
+            } catch (error) {
+                console.error('Error loading bill counter:', error);
+                billCounter = 1;
+            }
+        }
+
+        // Update bill counter in Firebase
+        async function updateBillCounter() {
+            try {
+                const counterRef = window.dbRef(window.database, 'billCounter');
+                await window.dbSet(counterRef, billCounter + 1);
+            } catch (error)
+            {
+                console.error('Error updating bill counter:', error);
+            }
+        }
+
+        // ########## START: CORRECTED FUNCTION ##########
+        // Convert number to words function
+        function numberToWords(num, currency = 'BDT') {
+            if (num === null || isNaN(num)) return ''; // Safety check for invalid input
+            if (num === 0) return currency === 'USD' ? 'Zero Dollars Only' : 'Zero Taka Only';
+            
+            const ones = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'];
+            const teens = ['Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen', 'Seventeen', 'Eighteen', 'Nineteen'];
+            const tens = ['', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'];
+            
+            // This helper function converts any number into words using the Crore/Lakh system
+            function convertToWords(n) {
+                if (n === 0) return '';
+                
+                // This inner function handles numbers up to 999
+                function convertHundreds(numPart) {
+                    let result = '';
+                    if (numPart >= 100) {
+                        result += ones[Math.floor(numPart / 100)] + ' Hundred ';
+                        numPart %= 100;
+                    }
+                    if (numPart >= 20) {
+                        result += tens[Math.floor(numPart / 10)] + ' ';
+                        numPart %= 10;
+                    } else if (numPart >= 10) {
+                        result += teens[numPart - 10] + ' ';
+                        return result.trim(); // Return early as teens cover the unit place
+                    }
+                    if (numPart > 0) {
+                        result += ones[numPart] + ' ';
+                    }
+                    return result.trim();
+                }
+                
+                let result = '';
+                let crore = Math.floor(n / 10000000);
+                n %= 10000000;
+                
+                let lakh = Math.floor(n / 100000);
+                n %= 100000;
+                
+                let thousand = Math.floor(n / 1000);
+                n %= 1000;
+                
+                if (crore > 0) result += convertHundreds(crore) + ' Crore ';
+                if (lakh > 0) result += convertHundreds(lakh) + ' Lakh ';
+                if (thousand > 0) result += convertHundreds(thousand) + ' Thousand ';
+                if (n > 0) result += convertHundreds(n);
+                
+                return result.trim();
+            }
+
+            // Ensure the number has two decimal places for currency calculation
+            const numFixed = parseFloat(num).toFixed(2);
+            // Split the number into the integer (taka/dollar) and fractional (paisa/cent) parts
+            const [integerPartStr, fractionalPartStr] = numFixed.split('.');
+            
+            const integerPart = parseInt(integerPartStr, 10);
+            const fractionalPart = parseInt(fractionalPartStr, 10);
+            
+            let words = '';
+            
+            // Convert the integer part if it's greater than zero
+            if (integerPart > 0) {
+                words += convertToWords(integerPart);
+                words += currency === 'USD' ? ' Dollars' : ' Taka';
+            }
+            
+            // Convert the fractional part if it's greater than zero
+            if (fractionalPart > 0) {
+                // Add "and" if there was also an integer part
+                if (words !== '') {
+                    words += ' and ';
+                }
+                words += convertToWords(fractionalPart);
+                words += currency === 'USD' ? ' Cents' : ' Paisa';
+            }
+            
+            // Add "Only" at the end and capitalize the first letter
+            let finalWords = words.trim() + ' Only';
+            return finalWords.charAt(0).toUpperCase() + finalWords.slice(1);
+        }
+        // ########## END: CORRECTED FUNCTION ##########
+
+
+        // Helper function to check if transport fields should be shown
+        function shouldShowTransportFields(inputValue) {
+            const internalDepartments = [
+                'Cutting 01',
+                'Cutting 02', 
+                'Cutting 03',
+                'Cutting 04',
+                'Cutting 05',
+                'Unit - 2 (Cutting 06)',
+                'Unit - 2 (Cutting 07)',
+                'Sewing Department',
+                'Finishing Department',
+                'AOP',
+                'Dyeing Return',
+                'Sample Department'
+            ];
+            
+            return inputValue && !internalDepartments.includes(inputValue);
+        }
+
+        // Toggle GMS Textiles fields
+        function toggleGmsFields() {
+            const issueToInput = document.getElementById('issueTo');
+            const gmsFields = document.getElementById('gmsTextileFields');
+            const inputValue = issueToInput.value.trim();
+            
+            // Show transport fields if it's NOT an internal department
+            if (shouldShowTransportFields(inputValue)) {
+                gmsFields.classList.remove('hidden');
+                gmsFields.classList.add('fade-in');
+            } else {
+                gmsFields.classList.add('hidden');
+                gmsFields.classList.remove('fade-in');
+                // Clear fields when internal department is selected
+                document.getElementById('partyAddress').value = '';
+                document.getElementById('driverName').value = '';
+                document.getElementById('vehicleNo').value = '';
+                document.getElementById('gatePassNo').value = '';
+                document.getElementById('lockNo').value = '';
+            }
+        }
+        
+        // ########## START: NEW JAVASCRIPT FUNCTION FOR REPORT BUTTON ##########
+        // Toggle Issue-wise Report visibility
+        function toggleIssueReport() {
+            const reportContainer = document.getElementById('issueReportContainer');
+            const toggleButton = document.getElementById('toggleReportButton');
+            
+            reportContainer.classList.toggle('hidden');
+            
+            if (reportContainer.classList.contains('hidden')) {
+                toggleButton.textContent = 'Show Issue-wise Report';
+            } else {
+                toggleButton.textContent = 'Hide Issue-wise Report';
+            }
+        }
+        // ########## END: NEW JAVASCRIPT FUNCTION FOR REPORT BUTTON ##########
+
+        // Toggle Rate and Amount columns
+        function toggleRateAmountColumns() {
+            const checkbox = document.getElementById('toggleRateAmount');
+            const rateHeader = document.getElementById('rateHeader');
+            const amountHeader = document.getElementById('amountHeader');
+            const additionalNotesSection = document.getElementById('additionalNotesSection');
+            
+            // Select all rate and amount cells, including headers and footers
+            const rateCells = document.querySelectorAll('.rate-cell');
+            const amountCells = document.querySelectorAll('.amount-cell');
+
+            if (checkbox.checked) {
+                rateCells.forEach(cell => cell.style.display = 'table-cell');
+                amountCells.forEach(cell => cell.style.display = 'table-cell');
+                additionalNotesSection.classList.remove('hidden');
+            } else {
+                rateCells.forEach(cell => cell.style.display = 'none');
+                amountCells.forEach(cell => cell.style.display = 'none');
+                additionalNotesSection.classList.add('hidden');
+            }
+        }
+
+        // Calculate amount based on grey quantity and rate
+        function calculateAmount(row) {
+            const greyQtyInput = row.querySelector('input[placeholder="Grey Qty"]');
+            const rateInput = row.querySelector('input[placeholder="Rate"]');
+            const amountInput = row.querySelector('input[placeholder="Amount"]');
+            
+            if (greyQtyInput && rateInput && amountInput) {
+                const greyQty = parseFloat(greyQtyInput.value) || 0;
+                const rate = parseFloat(rateInput.value) || 0;
+                const amount = greyQty * rate;
+                amountInput.value = amount.toFixed(2);
+            }
+            updateGrandTotal(); // Update grand total whenever amount is calculated
+        }
+
+        // ########## START: NEW FUNCTION FOR GRAND TOTAL ##########
+        function updateGrandTotal() {
+            const tableRows = document.querySelectorAll('#fabricItemsTable tbody tr');
+            let totalRolls = 0;
+            let totalGreyQty = 0;
+            let totalIssueQty = 0;
+            let totalAmount = 0;
+
+            tableRows.forEach(row => {
+                // Ensure it's a data row, not the "No items added" placeholder
+                if (row.cells.length > 1) {
+                    const rollsInput = row.cells[10].querySelector('input');
+                    const greyQtyInput = row.cells[12].querySelector('input');
+                    const issueQtyInput = row.cells[13].querySelector('input');
+                    const amountInput = row.cells[15].querySelector('input');
+
+                    if (rollsInput) totalRolls += parseInt(rollsInput.value) || 0;
+                    if (greyQtyInput) totalGreyQty += parseFloat(greyQtyInput.value) || 0;
+                    if (issueQtyInput) totalIssueQty += parseFloat(issueQtyInput.value) || 0;
+                    if (amountInput) totalAmount += parseFloat(amountInput.value) || 0;
+                }
+            });
+
+            document.getElementById('totalRolls').textContent = totalRolls;
+            document.getElementById('totalGreyQty').textContent = totalGreyQty.toFixed(2);
+            document.getElementById('totalIssueQty').textContent = totalIssueQty.toFixed(2);
+            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2);
+        }
+        // ########## END: NEW FUNCTION FOR GRAND TOTAL ##########
+
+        // Generate challan number
+        function generateChallanNumber() {
+            const currentYear = new Date().getFullYear().toString().slice(-2);
+            // Uses the real-time `challanCounter` variable
+            const challanNumber = `GMS-${currentYear}-${String(challanCounter).padStart(6, '0')}`;
+            document.getElementById('challanNumber').value = challanNumber;
+        }
+
+        // Set current date
+        function setCurrentDate() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('invoiceDate').value = today;
+        }
+
+        // Add fabric item row
+        // MODIFIED FUNCTION
+        function addFabricItem() {
+            const tableBody = document.querySelector('#fabricItemsTable tbody');
+            
+            if (tableBody.children.length === 1 && tableBody.children[0].children[0].colSpan === 18) {
+                tableBody.innerHTML = '';
+            }
+
+            let lastRowData = {};
+            const existingRows = tableBody.querySelectorAll('tr');
+            if (existingRows.length > 0) {
+                const lastRow = existingRows[existingRows.length - 1];
+                const inputs = lastRow.querySelectorAll('input');
+                const selects = lastRow.querySelectorAll('select');
+                if (inputs.length > 0) {
+                    lastRowData = {
+                        issueType: inputs[0].value || '',
+                        buyer: inputs[1].value || '',
+                        storeRef: inputs[2].value || '',
+                        certification: inputs[3].value || '',
+                        dia: inputs[4].value || '',
+                        fabricType: inputs[5].value || '',
+                        gsm: inputs[6].value || '',
+                        color: inputs[7].value || '',
+                        batchNo: inputs[8].value || '',
+                        location: inputs[9].value || '',
+                        rolls: '',
+                        uom: inputs[11].value || '',
+                        greyQty: '',
+                        issueQty: '',
+                        rate: inputs[14] ? inputs[14].value || '' : '',
+                        currency: selects.length > 0 ? selects[0].value : 'BDT',
+                        amount: '',
+                        remarks: inputs[inputs.length - 2] ? inputs[inputs.length - 2].value || '' : ''
+                    };
+                }
+            }
+
+            const row = document.createElement('tr');
+            row.style.backgroundColor = itemCounter % 2 === 0 ? '#D6EEEE' : 'white';
+            row.className = 'fade-in';
+            
+            const isRateAmountVisible = document.getElementById('toggleRateAmount').checked;
+            const rateAmountDisplay = isRateAmountVisible ? 'table-cell' : 'none';
+            
+            row.innerHTML = `
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="issueTypeList" value="${lastRowData.issueType || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Issue Type">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${lastRowData.buyer || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Buyer">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${lastRowData.storeRef || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Store Ref">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="certificationList" value="${lastRowData.certification || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Certification">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${lastRowData.dia || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Dia">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="fabricTypeList" value="${lastRowData.fabricType || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="F/Type">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="number" value="${lastRowData.gsm || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="GSM">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${lastRowData.color || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Color">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${lastRowData.batchNo || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Batch No">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="locationList" value="${lastRowData.location || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Location">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="number" value="${lastRowData.rolls || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Rolls" oninput="updateGrandTotal()">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="uomList" value="${lastRowData.uom || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="UOM">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="number" step="0.01" value="${lastRowData.greyQty || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Grey Qty" oninput="calculateAmount(this.closest('tr'))">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="number" step="0.01" value="${lastRowData.issueQty || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Issue Qty" oninput="updateGrandTotal()">
+                </td>
+                <td class="rate-cell" style="border: 1px solid #dddddd; padding: 8px; display: ${rateAmountDisplay};">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <input type="number" step="0.01" value="${lastRowData.rate || ''}" style="flex-grow: 1; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Rate" oninput="calculateAmount(this.closest('tr'))">
+                        <select class="currency-select" style="border: none; background: transparent;">
+                            <option value="BDT" ${lastRowData.currency === 'BDT' ? 'selected' : ''}>BDT</option>
+                            <option value="USD" ${lastRowData.currency === 'USD' ? 'selected' : ''}>USD</option>
+                        </select>
+                    </div>
+                </td>
+                <td class="amount-cell" style="border: 1px solid #dddddd; padding: 8px; display: ${rateAmountDisplay};">
+                    <input type="number" step="0.01" value="${lastRowData.amount || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Amount" readonly>
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Remarks">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px; text-align: center;">
+                    <button type="button" onclick="removeFabricItem(this)" style="padding: 6px 12px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Remove
+                    </button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+            itemCounter++;
+            updateGrandTotal();
+        }
+
+        // Remove fabric item row
+        function removeFabricItem(button) {
+            const row = button.closest('tr');
+            row.remove();
+            
+            const tableBody = document.querySelector('#fabricItemsTable tbody');
+            if (tableBody.children.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="18" style="border: 1px solid #dddddd; text-align: center; padding: 20px; color: #666;">
+                            No items added. Click "Add Item" to start.
+                        </td>
+                    </tr>
+                `;
+            }
+            updateGrandTotal();
+        }
+
+// Search challan function (Updated & Fixed)
+async function searchChallan() {
+    const searchNumber = document.getElementById('searchChallanNumber').value.trim();
+    const statusDiv = document.getElementById('searchStatus');
+    
+    // ইনপুট চেক
+    if (!searchNumber) {
+        statusDiv.innerHTML = '<span class="text-red-600">Please enter a challan number</span>';
+        return;
+    }
+    
+    statusDiv.innerHTML = '<span class="text-blue-600">Searching inside Database...</span>';
+    
+    try {
+        // ১. ডাটাবেস রেফারেন্স এবং কুয়েরি তৈরি
+        const challansRef = window.dbRef(window.database, 'challans');
+        
+        // সার্ভারে সরাসরি কুয়েরি করা হচ্ছে (এজন্য ধাপ ১ এর Rule জরুরি)
+        const searchQuery = window.dbQuery(
+            challansRef, 
+            window.dbOrderByChild('challanNumber'), 
+            window.dbEqualTo(searchNumber)
+        );
+        
+        // ২. ডাটা আনা (get)
+        const snapshot = await window.dbGet(searchQuery);
+
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            // Firebase কুয়েরি রেজাল্ট একটি অবজেক্ট হিসেবে দেয় (Key: Value)
+            // তাই আমাদের প্রথম Key টি বের করতে হবে
+            const key = Object.keys(data)[0];
+            const foundChallan = data[key];
+            
+            // ৩. ফর্মে ডাটা লোড করা
+            loadChallanToForm(foundChallan, key);
+            statusDiv.innerHTML = '<span class="text-green-600 font-bold">Challan found and loaded successfully!</span>';
+        } else {
+            statusDiv.innerHTML = '<span class="text-red-600 font-bold">Challan not found in database.</span>';
+        }
+
+    } catch (error) {
+        console.error('Error searching challan:', error);
+        // যদি ইনডেক্সিং এরর হয় তবে ইউজারকে জানানো
+        if (error.message.includes("Index not defined")) {
+            statusDiv.innerHTML = '<span class="text-red-600">Database Index missing! Please update Firebase Rules.</span>';
+        } else {
+            statusDiv.innerHTML = '<span class="text-red-600">Network Error or Invalid Data.</span>';
+        }
+    }
+}
+
+        // Load challan data to form for editing
+        function loadChallanToForm(challan, challanKey) {
+            isEditMode = true;
+            editingChallanId = challanKey;
+            
+            document.getElementById('editModeIndicator').classList.remove('hidden');
+            document.getElementById('editingChallanNumber').textContent = challan.challanNumber;
+            document.getElementById('submitButton').textContent = 'Update Challan';
+            
+            document.getElementById('challanNumber').value = challan.challanNumber;
+            document.getElementById('invoiceDate').value = challan.invoiceDate;
+            document.getElementById('receiverName').value = challan.receiverName;
+            document.getElementById('issueTo').value = challan.issueTo;
+            document.getElementById('contactNumber').value = challan.contactNumber || '';
+            
+            // Clear existing state before loading new
+            document.getElementById('toggleRateAmount').checked = false;
+
+            // Load additional notes if available
+            if (challan.additionalNotes || (challan.items && challan.items.some(item => item.rate || item.amount))) {
+                document.getElementById('additionalNotes').value = challan.additionalNotes || '';
+                document.getElementById('toggleRateAmount').checked = true;
+            }
+            toggleRateAmountColumns(); // Apply visibility based on checkbox state
+            
+            if (challan.gmsFields) {
+                toggleGmsFields();
+                document.getElementById('partyAddress').value = challan.gmsFields.partyAddress || '';
+                document.getElementById('driverName').value = challan.gmsFields.driverName || '';
+                document.getElementById('vehicleNo').value = challan.gmsFields.vehicleNo || '';
+                document.getElementById('gatePassNo').value = challan.gmsFields.gatePassNo || '';
+                document.getElementById('lockNo').value = challan.gmsFields.lockNo || '';
+            }
+            
+            const tableBody = document.querySelector('#fabricItemsTable tbody');
+            tableBody.innerHTML = '';
+            itemCounter = 1;
+            
+            challan.items.forEach(item => {
+                addFabricItemWithData(item);
+            });
+
+            updateGrandTotal(); // Calculate total for loaded items
+        }
+
+        // Add fabric item with existing data
+        // MODIFIED FUNCTION
+        function addFabricItemWithData(itemData) {
+            const tableBody = document.querySelector('#fabricItemsTable tbody');
+            const isRateAmountVisible = document.getElementById('toggleRateAmount').checked;
+            
+            const row = document.createElement('tr');
+            row.style.backgroundColor = itemCounter % 2 === 0 ? '#D6EEEE' : 'white';
+            row.className = 'fade-in';
+            
+            const rateAmountDisplay = isRateAmountVisible ? 'table-cell' : 'none';
+            
+            row.innerHTML = `
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="issueTypeList" value="${itemData.issueType || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Issue Type">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${itemData.buyer || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Buyer">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${itemData.storeRef || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Store Ref">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="certificationList" value="${itemData.certification || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Certification">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${itemData.dia || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Dia">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="fabricTypeList" value="${itemData.fabricType || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="F/Type">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="number" value="${itemData.gsm || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="GSM">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${itemData.color || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Color">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${itemData.batchNo || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Batch No">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="locationList" value="${itemData.location || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Location">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="number" value="${itemData.rolls || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Rolls" oninput="updateGrandTotal()">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" list="uomList" value="${itemData.uom || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="UOM">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="number" step="0.01" value="${itemData.greyQty || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Grey Qty" oninput="calculateAmount(this.closest('tr'))">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="number" step="0.01" value="${itemData.issueQty || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Issue Qty" oninput="updateGrandTotal()">
+                </td>
+                <td class="rate-cell" style="border: 1px solid #dddddd; padding: 8px; display: ${rateAmountDisplay};">
+                    <div style="display: flex; align-items: center; gap: 5px;">
+                        <input type="number" step="0.01" value="${itemData.rate || ''}" style="flex-grow: 1; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Rate" oninput="calculateAmount(this.closest('tr'))">
+                        <select class="currency-select" style="border: none; background: transparent;">
+                            <option value="BDT" ${itemData.currency === 'BDT' ? 'selected' : ''}>BDT</option>
+                            <option value="USD" ${itemData.currency === 'USD' ? 'selected' : ''}>USD</option>
+                        </select>
+                    </div>
+                </td>
+                <td class="amount-cell" style="border: 1px solid #dddddd; padding: 8px; display: ${rateAmountDisplay};">
+                    <input type="number" step="0.01" value="${itemData.amount || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Amount" readonly>
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px;">
+                    <input type="text" value="${itemData.remarks || ''}" style="width: 100%; padding: 8px; border: none; background: transparent; outline: none;" placeholder="Remarks">
+                </td>
+                <td style="border: 1px solid #dddddd; padding: 8px; text-align: center;">
+                    <button type="button" onclick="removeFabricItem(this)" style="padding: 6px 12px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+                        Remove
+                    </button>
+                </td>
+            `;
+            
+            tableBody.appendChild(row);
+            itemCounter++;
+        }
+
+        // Clear form function
+        function clearForm() {
+            isEditMode = false;
+            editingChallanId = null;
+            document.getElementById('editModeIndicator').classList.add('hidden');
+            document.getElementById('submitButton').textContent = 'Create Challan';
+            
+            document.getElementById('searchChallanNumber').value = '';
+            document.getElementById('searchStatus').innerHTML = '';
+            
+            resetForm();
+            generateChallanNumber(); // <-- Regenerate number after clearing
+        }
+
+// Setup real-time listener for challans (Optimized for Speed)
+function setupRealtimeListener() {
+    try {
+        const challansRef = window.dbRef(window.database, 'challans');
+        
+        // এখানে পরিবর্তন: সব ডাটা না এনে শুধু শেষের ২০০টি ডাটা আনা হচ্ছে
+        const recentChallansQuery = window.dbQuery(challansRef, window.dbLimitToLast(200));
+        
+        // Remove existing listener if any
+        if (challansListener) {
+            window.dbOff(challansRef, 'value', challansListener);
+        }
+        
+        // Set up new listener on the QUERY, not the whole reference
+        challansListener = window.dbOnValue(recentChallansQuery, (snapshot) => {
+            if (snapshot.exists()) {
+                const firebaseChallans = snapshot.val();
+                // ডাটা অবজেক্ট থেকে অ্যারেতে কনভার্ট করা
+                challans = Object.values(firebaseChallans);
+                
+                // নতুন থেকে পুরাতন অনুযায়ী সাজানো (Client side sort ensure করা)
+                challans.sort((a, b) => new Date(b.createdAt || b.invoiceDate) - new Date(a.createdAt || a.invoiceDate));
+
+                updateChallansTable();
+                updateIssueReport();
+                console.log('Real-time update: Recent challans loaded:', challans.length);
+                
+                if (challans.length > 0) {
+                    showUpdateNotification();
+                }
+            } else {
+                challans = [];
+                updateChallansTable();
+                updateIssueReport();
+            }
+        }, (error) => {
+            console.error('Error in real-time listener:', error);
+        });
+        
+        console.log('Fast Real-time listener setup complete');
+    } catch (error) {
+        console.error('Error setting up real-time listener:', error);
+    }
+}
+
+        // Load challans from Firebase (fallback method)
+        async function loadChallansFromFirebase() {
+            try {
+                const challansRef = window.dbRef(window.database, 'challans');
+                const snapshot = await window.dbGet(challansRef);
+                
+                if (snapshot.exists()) {
+                    const firebaseChallans = snapshot.val();
+                    challans = Object.values(firebaseChallans);
+                    updateChallansTable();
+                    updateIssueReport();
+                    console.log('Challans loaded from Firebase:', challans.length);
+                } else {
+                    challans = [];
+                    updateChallansTable();
+                    updateIssueReport();
+                    console.log('No challans found in Firebase');
+                }
+            } catch (error) {
+                console.error('Error loading challans from Firebase:', error);
+                alert('Error loading challans from Firebase');
+            }
+        }
+
+// ########## START: FASTER CHALLAN CREATION ##########
+async function createChallan(event) {
+    event.preventDefault();
+    
+    const invoiceDate = document.getElementById('invoiceDate').value;
+    const receiverName = document.getElementById('receiverName').value;
+    const issueTo = document.getElementById('issueTo').value;
+    const contactNumber = document.getElementById('contactNumber').value;
+    const additionalNotes = document.getElementById('toggleRateAmount').checked ? 
+        document.getElementById('additionalNotes').value : '';
+    
+    const gmsFields = {
+        partyAddress: document.getElementById('partyAddress').value,
+        driverName: document.getElementById('driverName').value,
+        vehicleNo: document.getElementById('vehicleNo').value,
+        gatePassNo: document.getElementById('gatePassNo').value,
+        lockNo: document.getElementById('lockNo').value
+    };
+    
+    const tableRows = document.querySelectorAll('#fabricItemsTable tbody tr');
+    const items = [];
+    
+    tableRows.forEach(row => {
+        const inputs = row.querySelectorAll('input');
+        const selects = row.querySelectorAll('select');
+        if (inputs.length > 0) {
+            const item = {
+                issueType: inputs[0].value,
+                buyer: inputs[1].value,
+                storeRef: inputs[2].value,
+                certification: inputs[3].value,
+                dia: inputs[4].value,
+                fabricType: inputs[5].value,
+                gsm: inputs[6].value,
+                color: inputs[7].value,
+                batchNo: inputs[8].value,
+                location: inputs[9].value,
+                rolls: inputs[10].value,
+                uom: inputs[11].value,
+                greyQty: inputs[12].value,
+                issueQty: inputs[13].value,
+                rate: inputs[14] ? inputs[14].value : '',
+                currency: selects.length > 0 ? selects[0].value : 'BDT',
+                amount: inputs[15] ? inputs[15].value : '',
+                remarks: inputs[16] ? inputs[16].value : ''
+            };
+            
+            if (item.issueType || item.buyer || item.fabricType) {
+                items.push(item);
+            }
+        }
+    });
+    
+    if (items.length === 0) {
+        alert('Please add at least one fabric item.');
+        return;
+    }
+
+    // বাটনে লোডিং ইফেক্ট দেখানো (যাতে ইউজার বোঝে কাজ হচ্ছে)
+    const submitBtn = document.getElementById('submitButton');
+    const originalBtnText = submitBtn.innerText;
+    submitBtn.innerText = "Saving...";
+    submitBtn.disabled = true;
+
+    try {
+        if (isEditMode && editingChallanId) {
+            // --- EDIT MODE ---
+            const challanNumber = document.getElementById('challanNumber').value;
+            const challan = {
+                challanNumber,
+                invoiceDate,
+                receiverName,
+                issueTo,
+                contactNumber,
+                gmsFields: shouldShowTransportFields(issueTo.trim()) ? gmsFields : null,
+                items,
+                additionalNotes: additionalNotes,
+                updatedAt: new Date().toISOString()
+            };
+
+            const existingChallan = challans.find(c => c.challanNumber === challan.challanNumber);
+            if (existingChallan) {
+                challan.createdAt = existingChallan.createdAt;
+                challan.billNumber = existingChallan.billNumber || null; 
+            }
+
+            const challanRef = window.dbRef(window.database, `challans/${editingChallanId}`);
+            await window.dbSet(challanRef, challan);
+            alert(`Challan ${challanNumber} updated successfully!`);
+
+        } else {
+            // --- NEW CHALLAN (Optimized) ---
+            const counterRef = window.dbRef(window.database, 'challanCounter');
+            
+            const transactionResult = await window.dbRunTransaction(counterRef, (currentData) => {
+                return (currentData || 0) + 1;
+            });
+
+            if (!transactionResult.committed) {
+                throw new Error('Counter failed.');
+            }
+
+            const nextCounterValue = transactionResult.snapshot.val();
+            // কাউন্টার ১ বাড়িয়ে সেভ হয়েছে, তাই বর্তমান ভ্যালু হবে (nextCounterValue - 1) + 1 = nextCounterValue
+            // কিন্তু আপনার আগের লজিক ছিল (nextCounterValue - 1), তাই সেটিই রাখা হলো
+            const challanSequenceNumber = nextCounterValue - 1; 
+
+            const currentYear = new Date().getFullYear().toString().slice(-2);
+            // এখানে যদি nextCounterValue সরাসরি ব্যবহার করতে চান তবে nextCounterValue ব্যবহার করুন
+            // আপনার আগের লজিক অনুযায়ী:
+            const newChallanNumber = `GMS-${currentYear}-${String(challanSequenceNumber).padStart(6, '0')}`;
+
+            const challan = {
+                challanNumber: newChallanNumber,
+                invoiceDate,
+                receiverName,
+                issueTo,
+                contactNumber,
+                gmsFields: shouldShowTransportFields(issueTo.trim()) ? gmsFields : null,
+                items,
+                additionalNotes: additionalNotes,
+                billNumber: null,
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            const challansRef = window.dbRef(window.database, 'challans');
+            // OPTIMIZATION: push এবং set আলাদা না করে একসাথে ডাটা পাঠানো হচ্ছে
+            await window.dbPush(challansRef, challan);
+            
+            alert(`Challan ${newChallanNumber} created successfully!`);
+        }
+        
+        resetForm();
+        
+    } catch (error) {
+        console.error('Error saving:', error);
+        alert('Error saving data. Please check internet connection.');
+    } finally {
+        submitBtn.innerText = originalBtnText;
+        submitBtn.disabled = false;
+    }
+}
+// ########## END: FASTER CHALLAN CREATION ##########
+
+
+        // Reset form
+        function resetForm() {
+            document.getElementById('challanForm').reset();
+            
+            isEditMode = false;
+            editingChallanId = null;
+            document.getElementById('editModeIndicator').classList.add('hidden');
+            document.getElementById('submitButton').textContent = 'Create Challan';
+            
+            // The listener will automatically call generateChallanNumber if not in edit mode
+            
+            setCurrentDate();
+            
+            document.getElementById('gmsTextileFields').classList.add('hidden');
+            document.getElementById('additionalNotesSection').classList.add('hidden');
+            
+            const tableBody = document.querySelector('#fabricItemsTable tbody');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="18" style="border: 1px solid #dddddd; text-align: center; padding: 20px; color: #666;">
+                        No items added. Click "Add Item" to start.
+                    </td>
+                </tr>
+            `;
+            
+            itemCounter = 1;
+            updateGrandTotal(); // Reset totals to 0
+        }
+
+        // ########## START: MODIFIED FUNCTION TO FIX MISSING CHALLAN & ADD SEARCH ##########
+        // Update challans table
+        function updateChallansTable() {
+            const tableBody = document.getElementById('challansTable');
+            const searchInput = document.getElementById('recentChallanSearchInput');
+            // লাইভ সার্চ করার জন্য সার্চ ইনপুট থেকে মান নেওয়া হচ্ছে
+            const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
+
+            if (challans.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-textSecondary">
+                            No challans found. Create a new challan.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let displayChallans = [...challans];
+
+            // যদি সার্চবক্সে কিছু লেখা থাকে, তাহলে চালানগুলো ফিল্টার করা হবে
+            if (searchTerm) {
+                displayChallans = displayChallans.filter(challan => 
+                    challan.challanNumber && challan.challanNumber.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            // চালানগুলোকে নতুন থেকে পুরানো অনুযায়ী সাজানো হচ্ছে
+            displayChallans.sort((a, b) => new Date(b.createdAt || b.invoiceDate) - new Date(a.createdAt || a.invoiceDate));
+
+            // যদি সার্চ করা না হয়, তাহলে শুধুমাত্র সাম্প্রতিক ২০টি চালান দেখানো হবে
+            if (!searchTerm) {
+                displayChallans = displayChallans.slice(0, 20);
+            }
+            
+            // যদি ফিল্টার করার পর কোনো চালান না পাওয়া যায়
+            if (displayChallans.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-textSecondary">
+                           '${searchTerm}' এর জন্য কোনো চালান খুঁজে পাওয়া যায়নি।
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // টেবিলে চালানগুলো দেখানো হচ্ছে
+            tableBody.innerHTML = displayChallans.map((challan, index) => `
+                <tr class="hover-row ${index % 2 === 0 ? 'table-row-even' : 'table-row-odd'}">
+                    <td class="px-6 py-4 text-sm font-medium text-secondary">${challan.challanNumber}</td>
+                    <td class="px-6 py-4 text-sm text-textSecondary">${challan.receiverName}</td>
+                    <td class="px-6 py-4 text-sm text-textSecondary">${challan.issueTo}</td>
+                    <td class="px-6 py-4 text-sm text-textSecondary">${challan.items.length} items</td>
+                    <td class="px-6 py-4 text-sm text-textSecondary">${new Date(challan.invoiceDate).toLocaleDateString()}</td>
+                    <td class="px-6 py-4 text-sm">
+                        <button onclick="downloadPDF('${challan.challanNumber}')" class="text-primary hover:text-green-700 mr-2">PDF</button>
+                        <button onclick="printChallan('${challan.challanNumber}')" class="text-blue-500 hover:text-blue-700 mr-2">Print</button>
+                        <button onclick="printBill('${challan.challanNumber}')" class="text-purple-500 hover:text-purple-700 mr-2">Bill</button>
+                        <button onclick="deleteChallan('${challan.challanNumber}')" class="text-red-500 hover:text-red-700">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        // ########## END: MODIFIED FUNCTION ##########
+
+        // Update issue report
+        function updateIssueReport() {
+            const tableBody = document.getElementById('issueReportTable');
+            const allItems = [];
+            const uniqueItems = new Set(); // Track unique items to prevent duplicates
+            
+            challans.forEach(challan => {
+                challan.items.forEach((item, index) => {
+                    // Create a unique identifier for each item
+                    const uniqueId = `${challan.challanNumber}-${index}`;
+                    
+                    // Only add if this item hasn't been added before
+                    if (!uniqueItems.has(uniqueId)) {
+                        uniqueItems.add(uniqueId);
+                        
+                        allItems.push({
+                            ...item,
+                            issueDestination: challan.issueTo,
+                            challanNumber: challan.challanNumber,
+                            date: challan.invoiceDate
+                        });
+                    }
+                });
+            });
+            
+            if (allItems.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="11" class="px-6 py-8 text-center text-textSecondary">
+                            No data available. Create some challans to see the report.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // ########## START: REPORT MODIFICATION ##########
+            tableBody.innerHTML = allItems.map((item, index) => `
+                <tr class="hover-row ${index % 2 === 0 ? 'table-row-even' : 'table-row-odd'}">
+                    <td class="px-4 py-3 text-sm text-secondary">${item.issueDestination || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.issueType || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.buyer || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.storeRef || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.fabricType || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.color || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.rolls || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.issueQty || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.uom || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.challanNumber}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${new Date(item.date).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+            // ########## END: REPORT MODIFICATION ##########
+        }
+
+        // Handle date range change
+        function handleDateRangeChange() {
+            const dateRangeFilter = document.getElementById('dateRangeFilter');
+            const customDateRange = document.getElementById('customDateRange');
+            
+            if (dateRangeFilter.value === 'custom') {
+                customDateRange.classList.remove('hidden');
+                // Set default dates
+                const today = new Date();
+                const lastWeek = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                document.getElementById('startDate').value = lastWeek.toISOString().split('T')[0];
+                document.getElementById('endDate').value = today.toISOString().split('T')[0];
+            } else {
+                customDateRange.classList.add('hidden');
+            }
+            
+            applyFilters();
+        }
+
+        // Get date range based on filter selection
+        function getDateRange(filterValue) {
+            const today = new Date();
+            const todayStr = today.toISOString().split('T')[0];
+            
+            switch (filterValue) {
+                case 'today':
+                    return { start: todayStr, end: todayStr };
+                    
+                case 'yesterday':
+                    const yesterday = new Date(today.getTime() - 24 * 60 * 60 * 1000);
+                    const yesterdayStr = yesterday.toISOString().split('T')[0];
+                    return { start: yesterdayStr, end: yesterdayStr };
+                    
+                case 'last7days':
+                    const last7Days = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
+                    return { start: last7Days.toISOString().split('T')[0], end: todayStr };
+                    
+                case 'last30days':
+                    const last30Days = new Date(today.getTime() - 30 * 24 * 60 * 60 * 1000);
+                    return { start: last30Days.toISOString().split('T')[0], end: todayStr };
+                    
+                case 'thisMonth':
+                    const thisMonthStart = new Date(today.getFullYear(), today.getMonth(), 1);
+                    return { start: thisMonthStart.toISOString().split('T')[0], end: todayStr };
+                    
+                case 'lastMonth':
+                    const lastMonthStart = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                    const lastMonthEnd = new Date(today.getFullYear(), today.getMonth(), 0);
+                    return { 
+                        start: lastMonthStart.toISOString().split('T')[0], 
+                        end: lastMonthEnd.toISOString().split('T')[0] 
+                    };
+                    
+                case 'custom':
+                    const startDate = document.getElementById('startDate').value;
+                    const endDate = document.getElementById('endDate').value;
+                    return { start: startDate, end: endDate };
+                    
+                default:
+                    return null;
+            }
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            const issueDestinationFilter = document.getElementById('issueDestinationFilter').value;
+            const dateRangeFilter = document.getElementById('dateRangeFilter').value;
+            const dateRange = getDateRange(dateRangeFilter);
+            
+            // Filter the data and rebuild the table
+            const allItems = [];
+            const uniqueItems = new Set(); // Track unique items to prevent duplicates
+            
+            challans.forEach(challan => {
+                challan.items.forEach((item, index) => {
+                    // Create a unique identifier for each item
+                    const uniqueId = `${challan.challanNumber}-${index}`;
+                    
+                    // Only add if this item hasn't been added before
+                    if (!uniqueItems.has(uniqueId)) {
+                        uniqueItems.add(uniqueId);
+                        
+                        const itemData = {
+                            ...item,
+                            issueDestination: challan.issueTo,
+                            challanNumber: challan.challanNumber,
+                            date: challan.invoiceDate
+                        };
+                        
+                        let includeItem = true;
+                        
+                        // Apply issue destination filter
+                        if (issueDestinationFilter && challan.issueTo !== issueDestinationFilter) {
+                            includeItem = false;
+                        }
+                        
+                        // Apply date filter
+                        if (dateRange && dateRange.start && dateRange.end) {
+                            const itemDate = new Date(challan.invoiceDate);
+                            const startDate = new Date(dateRange.start);
+                            const endDate = new Date(dateRange.end);
+                            
+                            if (itemDate < startDate || itemDate > endDate) {
+                                includeItem = false;
+                            }
+                        }
+                        
+                        if (includeItem) {
+                            allItems.push(itemData);
+                        }
+                    }
+                });
+            });
+            
+            // Rebuild the table with filtered data
+            const tableBody = document.getElementById('issueReportTable');
+            
+            if (allItems.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="11" class="px-6 py-8 text-center text-textSecondary">
+                            ${issueDestinationFilter || dateRangeFilter ? 'No data matches the selected filters.' : 'No data available. Create some challans to see the report.'}
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            // ########## START: REPORT MODIFICATION ##########
+            tableBody.innerHTML = allItems.map((item, index) => `
+                <tr class="hover-row ${index % 2 === 0 ? 'table-row-even' : 'table-row-odd'}">
+                    <td class="px-4 py-3 text-sm text-secondary">${item.issueDestination || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.issueType || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.buyer || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.storeRef || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.fabricType || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.color || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.rolls || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.issueQty || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.uom || '-'}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${item.challanNumber}</td>
+                    <td class="px-4 py-3 text-sm text-textSecondary">${new Date(item.date).toLocaleDateString()}</td>
+                </tr>
+            `).join('');
+            // ########## END: REPORT MODIFICATION ##########
+            
+            // Update filter status
+            updateFilterStatus(allItems.length, issueDestinationFilter, dateFilter);
+        }
+
+        // Update filter status display
+        function updateFilterStatus(visibleCount, issueFilter, dateFilter) {
+            // You can add a status display here if needed
+            console.log(`Showing ${visibleCount} records with filters: Issue=${issueFilter || 'All'}, Date=${dateFilter || 'All'}`);
+        }
+
+        // Clear all filters
+        function clearAllFilters() {
+            document.getElementById('issueDestinationFilter').value = '';
+            document.getElementById('dateRangeFilter').value = '';
+            document.getElementById('customDateRange').classList.add('hidden');
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            
+            // Rebuild the table with all data
+            updateIssueReport();
+        }
+
+        // Export issue report
+        function exportIssueReport() {
+            const issueDestinationFilter = document.getElementById('issueDestinationFilter').value;
+            const dateRangeFilter = document.getElementById('dateRangeFilter').value;
+            const dateRange = getDateRange(dateRangeFilter);
+            const allItems = [];
+            const uniqueItems = new Set(); // Track unique items to prevent duplicates
+            
+            challans.forEach(challan => {
+                challan.items.forEach((item, index) => {
+                    // Create a unique identifier for each item
+                    const uniqueId = `${challan.challanNumber}-${index}`;
+                    
+                    // Only add if this item hasn't been added before
+                    if (!uniqueItems.has(uniqueId)) {
+                        uniqueItems.add(uniqueId);
+                        
+                        const itemData = {
+                            ...item,
+                            issueDestination: challan.issueTo,
+                            challanNumber: challan.challanNumber,
+                            date: challan.invoiceDate
+                        };
+                        
+                        let includeItem = true;
+                        
+                        // Apply issue destination filter
+                        if (issueDestinationFilter && challan.issueTo !== issueDestinationFilter) {
+                            includeItem = false;
+                        }
+                        
+                        // Apply date filter
+                        if (dateRange && dateRange.start && dateRange.end) {
+                            const itemDate = new Date(challan.invoiceDate);
+                            const startDate = new Date(dateRange.start);
+                            const endDate = new Date(dateRange.end);
+                            
+                            if (itemDate < startDate || itemDate > endDate) {
+                                includeItem = false;
+                            }
+                        }
+                        
+                        if (includeItem) {
+                            allItems.push(itemData);
+                        }
+                    }
+                });
+            });
+
+            if (allItems.length === 0) {
+                alert('No data to export');
+                return;
+            }
+
+            // ########## START: REPORT MODIFICATION ##########
+            // Create Excel content with proper formatting
+            let excelContent = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head>
+                    <meta charset="utf-8">
+                    <!--[if gte mso 9]>
+                    <xml>
+                        <x:ExcelWorkbook>
+                            <x:ExcelWorksheets>
+                                <x:ExcelWorksheet>
+                                    <x:Name>Issue Report</x:Name>
+                                    <x:WorksheetOptions>
+                                        <x:DisplayGridlines/>
+                                    </x:WorksheetOptions>
+                                </x:ExcelWorksheet>
+                            </x:ExcelWorksheets>
+                        </x:ExcelWorkbook>
+                    </xml>
+                    <![endif]-->
+                    <style>
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                            font-family: Arial, sans-serif;
+                        }
+                        .header-row {
+                            background-color: #2c5530;
+                            color: white;
+                            font-weight: bold;
+                            text-align: center;
+                            font-size: 14px;
+                        }
+                        .company-header {
+                            background-color: #059669;
+                            color: white;
+                            font-weight: bold;
+                            text-align: center;
+                            font-size: 18px;
+                            padding: 15px;
+                        }
+                        .report-title {
+                            background-color: #f0f8ff;
+                            color: #2c5530;
+                            font-weight: bold;
+                            text-align: center;
+                            font-size: 16px;
+                            padding: 10px;
+                        }
+                        .data-row-even {
+                            background-color: #D6EEEE;
+                        }
+                        .data-row-odd {
+                            background-color: white;
+                        }
+                        th, td {
+                            border: 2px solid #000000;
+                            padding: 8px;
+                            text-align: left;
+                            font-size: 12px;
+                        }
+                        .number-cell {
+                            text-align: right;
+                        }
+                        .center-cell {
+                            text-align: center;
+                        }
+                        .filter-info {
+                            background-color: #fff3cd;
+                            color: #856404;
+                            font-weight: bold;
+                            text-align: center;
+                            padding: 8px;
+                            border: 2px solid #ffeaa7;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <table>
+                        <tr>
+                            <td colspan="11" class="company-header">GMS COMPOSITE KNITTING IND LTD</td>
+                        </tr>
+                        <tr>
+                            <td colspan="11" class="report-title">Issue-wise Detailed Report</td>
+                        </tr>
+                        ${issueDestinationFilter || dateRangeFilter ? `<tr><td colspan="11" class="filter-info">Filters Applied: ${issueDestinationFilter ? `Issue: ${issueDestinationFilter}` : ''}${issueDestinationFilter && dateRangeFilter ? ' | ' : ''}${dateRangeFilter ? `Date: ${dateRangeFilter}${dateRangeFilter === 'custom' && dateRange ? ` (${dateRange.start} to ${dateRange.end})` : ''}` : ''}</td></tr>` : ''}
+                        <tr>
+                            <td colspan="11" class="center-cell" style="background-color: #e9ecef; padding: 5px; font-size: 11px;">
+                                Generated on: ${new Date().toLocaleString('en-GB')} | Total Records: ${allItems.length}
+                            </td>
+                        </tr>
+                        <tr class="header-row">
+                            <th style="width: 150px;">Issue Destination</th>
+                            <th style="width: 100px;">Issue Type</th>
+                            <th style="width: 120px;">Buyer</th>
+                            <th style="width: 120px;">Store Ref.</th>
+                            <th style="width: 120px;">Fabric Type</th>
+                            <th style="width: 100px;">Color</th>
+                            <th style="width: 80px;">Rolls</th>
+                            <th style="width: 100px;">Issue Qty</th>
+                            <th style="width: 60px;">UOM</th>
+                            <th style="width: 120px;">Challan No</th>
+                            <th style="width: 100px;">Date</th>
+                        </tr>
+                        ${allItems.map((item, index) => `
+                            <tr class="${index % 2 === 0 ? 'data-row-even' : 'data-row-odd'}">
+                                <td>${item.issueDestination || '-'}</td>
+                                <td>${item.issueType || '-'}</td>
+                                <td>${item.buyer || '-'}</td>
+                                <td>${item.storeRef || '-'}</td>
+                                <td>${item.fabricType || '-'}</td>
+                                <td>${item.color || '-'}</td>
+                                <td class="center-cell">${item.rolls || '-'}</td>
+                                <td class="number-cell">${item.issueQty || '-'}</td>
+                                <td class="center-cell">${item.uom || '-'}</td>
+                                <td>${item.challanNumber}</td>
+                                <td class="center-cell">${new Date(item.date).toLocaleDateString('en-GB')}</td>
+                            </tr>
+                        `).join('')}
+                        <tr style="background-color: #28a745; color: white; font-weight: bold;">
+                            <td colspan="6" class="center-cell" style="font-size: 14px;">TOTAL SUMMARY</td>
+                            <td class="center-cell">${allItems.reduce((sum, item) => sum + (parseInt(item.rolls) || 0), 0)}</td>
+                            <td class="number-cell">${allItems.reduce((sum, item) => sum + (parseFloat(item.issueQty) || 0), 0).toFixed(2)}</td>
+                            <td colspan="3" class="center-cell">Total Items: ${allItems.length}</td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `;
+            // ########## END: REPORT MODIFICATION ##########
+
+            // Create and download the file
+            const blob = new Blob([excelContent], { 
+                type: 'application/vnd.ms-excel;charset=utf-8' 
+            });
+            
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            
+            // Create filename with filter information
+            let fileName = 'Issue-Report';
+            if (issueDestinationFilter) {
+                fileName += `-${issueDestinationFilter.replace(/\s+/g, '-')}`;
+            }
+            if (dateRangeFilter) {
+                fileName += `-${dateRangeFilter}`;
+                if (dateRangeFilter === 'custom' && dateRange) {
+                    fileName += `-${dateRange.start}-to-${dateRange.end}`;
+                }
+            }
+            fileName += `-${new Date().toISOString().split('T')[0]}.xls`;
+            
+            a.download = fileName;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Download PDF function
+        function downloadPDF(challanNumber) {
+            const challan = challans.find(c => c.challanNumber === challanNumber);
+            if (!challan) return;
+
+            const showGreyQty = document.getElementById('showGreyQtyInPrint').checked;
+            const showSubtotal = document.getElementById('showSubtotalInPrint').checked;
+
+            try {
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                
+                let yPosition = 20;
+                const pageWidth = 210;
+                const margin = 15;
+                const contentWidth = pageWidth - (margin * 2);
+                
+                // Header
+                pdf.setFontSize(18);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('GMS COMPOSITE KNITTING IND LTD', pageWidth/2, yPosition, { align: 'center' });
+                yPosition += 8;
+                
+                pdf.setFontSize(12);
+                pdf.setFont('helvetica', 'normal');
+                pdf.text('Sardagonj, Kashimpur, Gazipur', pageWidth/2, yPosition, { align: 'center' });
+                yPosition += 8;
+                
+                pdf.setFontSize(14);
+                pdf.setFont('helvetica', 'bold');
+                pdf.text('FINISH FABRIC MCD', pageWidth/2, yPosition, { align: 'center' });
+                yPosition += 8;
+                
+                pdf.setFontSize(16);
+                pdf.text('DELIVERY CHALLAN', pageWidth/2, yPosition, { align: 'center' });
+                yPosition += 15;
+                
+                // Draw line under header
+                pdf.line(margin, yPosition, pageWidth - margin, yPosition);
+                yPosition += 10;
+                
+                // Challan Info
+                pdf.setFontSize(10);
+                pdf.setFont('helvetica', 'normal');
+                
+                const leftCol = margin;
+                const rightCol = pageWidth/2 + 10;
+                
+                pdf.text(`Challan No: ${challan.challanNumber}`, leftCol, yPosition);
+                pdf.text(`Receiver: ${challan.receiverName}`, rightCol, yPosition);
+                yPosition += 6;
+                
+                pdf.text(`Date: ${new Date(challan.invoiceDate).toLocaleDateString('en-GB')}`, leftCol, yPosition);
+                pdf.text(`Contact: ${challan.contactNumber || 'N/A'}`, rightCol, yPosition);
+                yPosition += 6;
+                
+                pdf.text(`Issue To: ${challan.issueTo}`, leftCol, yPosition);
+                pdf.text(`Time: ${new Date().toLocaleTimeString('en-GB', {hour12: false})}`, rightCol, yPosition);
+                yPosition += 10;
+                
+                // Transport details if exists
+                if (challan.gmsFields) {
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.text('TRANSPORT & DELIVERY DETAILS', pageWidth/2, yPosition, { align: 'center' });
+                    yPosition += 6;
+                    
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.text(`Party Address: ${challan.gmsFields.partyAddress || 'N/A'}`, leftCol, yPosition);
+                    yPosition += 5;
+                    pdf.text(`Driver: ${challan.gmsFields.driverName || 'N/A'}`, leftCol, yPosition);
+                    pdf.text(`Vehicle: ${challan.gmsFields.vehicleNo || 'N/A'}`, rightCol, yPosition);
+                    yPosition += 5;
+                    pdf.text(`Gate Pass: ${challan.gmsFields.gatePassNo || 'N/A'}`, leftCol, yPosition);
+                    pdf.text(`Lock No: ${challan.gmsFields.lockNo || 'N/A'}`, rightCol, yPosition);
+                    yPosition += 10;
+                }
+                
+                // Table headers
+                const tableStartY = yPosition;
+                const rowHeight = 6;
+                const colWidths = showGreyQty ? [8, 15, 15, 15, 12, 8, 12, 8, 15, 12, 12, 8, 8, 12, 12, 15] : [8, 16, 16, 16, 12, 8, 12, 8, 16, 12, 12, 8, 8, 12, 16];
+                
+                let xPos = margin;
+                
+                pdf.setFont('helvetica', 'bold');
+                pdf.setFontSize(8);
+                
+                const headers = ['SL', 'Issue Type', 'Buyer', 'Store Ref', 'Cert', 'Dia', 'F/Type', 'GSM', 'Color', 'Batch', 'Location', 'Rolls', 'UOM'];
+                if (showGreyQty) headers.push('Grey Qty');
+                headers.push('Issue Qty', 'Remarks');
+                
+                // Draw table header
+                headers.forEach((header, i) => {
+                    pdf.rect(xPos, yPosition, colWidths[i], rowHeight);
+                    pdf.text(header, xPos + colWidths[i]/2, yPosition + 4, { align: 'center' });
+                    xPos += colWidths[i];
+                });
+                yPosition += rowHeight;
+                
+                // Table data
+                pdf.setFont('helvetica', 'normal');
+                challan.items.forEach((item, index) => {
+                    if (yPosition > 270) {
+                        pdf.addPage();
+                        yPosition = 20;
+                    }
+                    
+                    xPos = margin;
+                    const rowData = [
+                        (index + 1).toString(),
+                        item.issueType || '-',
+                        item.buyer || '-',
+                        item.storeRef || '-',
+                        item.certification || '-',
+                        item.dia || '-',
+                        item.fabricType || '-',
+                        item.gsm || '-',
+                        item.color || '-',
+                        item.batchNo || '-',
+                        item.location || '-',
+                        item.rolls || '-',
+                        item.uom || '-'
+                    ];
+                    
+                    if (showGreyQty) rowData.push(item.greyQty || '-');
+                    rowData.push(item.issueQty || '-', item.remarks || '-');
+                    
+                    rowData.forEach((data, i) => {
+                        pdf.rect(xPos, yPosition, colWidths[i], rowHeight);
+                        const textX = i === 0 || i === 11 || (showGreyQty && i === 13) || (!showGreyQty && i === 13) ? xPos + colWidths[i]/2 : xPos + 1;
+                        const align = i === 0 || i === 11 || (showGreyQty && i === 13) || (!showGreyQty && i === 13) ? 'center' : 'left';
+                        pdf.text(data.toString().substring(0, 12), textX, yPosition + 4, { align: align });
+                        xPos += colWidths[i];
+                    });
+                    yPosition += rowHeight;
+                });
+                
+                // Subtotal if enabled
+                if (showSubtotal) {
+                    xPos = margin;
+                    pdf.setFont('helvetica', 'bold');
+                    
+                    const totalRolls = challan.items.reduce((sum, item) => sum + (parseInt(item.rolls) || 0), 0);
+                    const totalIssueQty = challan.items.reduce((sum, item) => sum + (parseFloat(item.issueQty) || 0), 0);
+                    const totalGreyQty = challan.items.reduce((sum, item) => sum + (parseFloat(item.greyQty) || 0), 0);
+                    
+                    const subtotalCols = showGreyQty ? 11 : 10;
+                    
+                    // SUBTOTAL label
+                    for (let i = 0; i < subtotalCols; i++) {
+                        pdf.rect(xPos, yPosition, colWidths[i], rowHeight);
+                        if (i === subtotalCols - 1) {
+                            pdf.text('SUBTOTAL:', xPos + colWidths[i] - 1, yPosition + 4, { align: 'right' });
+                        }
+                        xPos += colWidths[i];
+                    }
+                    
+                    // Rolls total
+                    pdf.rect(xPos, yPosition, colWidths[subtotalCols], rowHeight);
+                    pdf.text(totalRolls.toString(), xPos + colWidths[subtotalCols]/2, yPosition + 4, { align: 'center' });
+                    xPos += colWidths[subtotalCols];
+                    
+                    // UOM
+                    pdf.rect(xPos, yPosition, colWidths[subtotalCols + 1], rowHeight);
+                    pdf.text('-', xPos + colWidths[subtotalCols + 1]/2, yPosition + 4, { align: 'center' });
+                    xPos += colWidths[subtotalCols + 1];
+                    
+                    if (showGreyQty) {
+                        // Grey Qty total
+                        pdf.rect(xPos, yPosition, colWidths[subtotalCols + 2], rowHeight);
+                        pdf.text(totalGreyQty.toFixed(2), xPos + colWidths[subtotalCols + 2]/2, yPosition + 4, { align: 'center' });
+                        xPos += colWidths[subtotalCols + 2];
+                    }
+                    
+                    // Issue Qty total
+                    const issueQtyCol = showGreyQty ? subtotalCols + 3 : subtotalCols + 2;
+                    pdf.rect(xPos, yPosition, colWidths[issueQtyCol], rowHeight);
+                    pdf.text(totalIssueQty.toFixed(2), xPos + colWidths[issueQtyCol]/2, yPosition + 4, { align: 'center' });
+                    xPos += colWidths[issueQtyCol];
+                    
+                    // Total items
+                    const remarksCol = showGreyQty ? subtotalCols + 4 : subtotalCols + 3;
+                    pdf.rect(xPos, yPosition, colWidths[remarksCol], rowHeight);
+                    pdf.text(`Total: ${challan.items.length}`, xPos + 1, yPosition + 4);
+                    
+                    yPosition += rowHeight + 10;
+                }
+                
+                // Additional Notes if available
+                if (challan.additionalNotes && challan.additionalNotes.trim() !== '') {
+                    yPosition += 10;
+                    pdf.setFont('helvetica', 'bold');
+                    pdf.setFontSize(10);
+                    pdf.text('Additional Notes:', margin, yPosition);
+                    yPosition += 5;
+                    
+                    pdf.setFont('helvetica', 'normal');
+                    pdf.setFontSize(9);
+                    
+                    // Split text into lines that fit the page width
+                    const lines = pdf.splitTextToSize(challan.additionalNotes, contentWidth);
+                    lines.forEach(line => {
+                        if (yPosition > 270) {
+                            pdf.addPage();
+                            yPosition = 20;
+                        }
+                        pdf.text(line, margin, yPosition);
+                        yPosition += 5;
+                    });
+                    
+                    yPosition += 10;
+                }
+                
+                // Signatures
+                yPosition += 20;
+                const sigWidth = 35;
+                const sigSpacing = (contentWidth - (sigWidth * 5)) / 4;
+                
+                xPos = margin;
+                const signatures = ['Prepared By', 'Received By', 'Checked By', 'AGM MCD', 'Approved By'];
+                
+                signatures.forEach(sig => {
+                    pdf.line(xPos, yPosition, xPos + sigWidth, yPosition);
+                    pdf.text(sig, xPos + sigWidth/2, yPosition + 5, { align: 'center' });
+                    xPos += sigWidth + sigSpacing;
+                });
+                
+                // Footer
+                pdf.setFontSize(8);
+                pdf.text(`Generated on: ${new Date().toLocaleString('en-GB')}`, pageWidth/2, yPosition + 15, { align: 'center' });
+                
+                pdf.save(`Challan-${challan.challanNumber}.pdf`);
+                
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('PDF তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
+            }
+        }
+
+        // Print challan
+        function printChallan(challanNumber) {
+            const challan = challans.find(c => c.challanNumber === challanNumber);
+            if (!challan) return;
+
+            const showGreyQty = document.getElementById('showGreyQtyInPrint').checked;
+            const showSubtotal = document.getElementById('showSubtotalInPrint').checked;
+
+            const printWindow = window.open('', '_blank');
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Challan - ${challan.challanNumber}</title>
+                    <style>
+                        body { 
+                            font-family: 'Times New Roman', serif; 
+                            margin: 0; 
+                            padding: 20px; 
+                            font-size: 14px;
+                            line-height: 1.5;
+                        }
+                        .header { 
+                            text-align: center; 
+                            border-bottom: 2px solid #000; 
+                            padding-bottom: 15px; 
+                            margin-bottom: 20px;
+                        }
+                        .company-name { 
+                            font-size: 28px; 
+                            font-weight: bold; 
+                            margin-bottom: 5px;
+                            color: #2c5530;
+                        }
+                        .company-address { 
+                            font-size: 16px; 
+                            color: #666;
+                            margin-bottom: 10px;
+                        }
+                        .challan-title {
+                            font-size: 22px;
+                            font-weight: bold;
+                            text-decoration: underline;
+                            margin-top: 10px;
+                        }
+                        .info-section { 
+                            display: flex; 
+                            justify-content: space-between; 
+                            margin-bottom: 20px;
+                            border: 1px solid #000;
+                            padding: 12px;
+                        }
+                        .info-left, .info-right { 
+                            width: 48%; 
+                        }
+                        .info-row { 
+                            margin-bottom: 10px; 
+                            font-size: 14px;
+                        }
+                        .label { 
+                            font-weight: bold; 
+                            display: inline-block; 
+                            width: 100px;
+                        }
+                        table { 
+                            width: 100%; 
+                            border-collapse: collapse; 
+                            margin-bottom: 20px;
+                            border: 2px solid #000;
+                        }
+                        th, td { 
+                            border: 1px solid #000; 
+                            padding: 10px; 
+                            text-align: left;
+                            font-size: 13px;
+                            font-family: Arial, sans-serif;
+                        }
+                        th { 
+                            background-color: white; 
+                            color: #000000;
+                            font-weight: bold;
+                            text-align: center;
+                            font-size: 14px;
+                            border: 2px solid #000;
+                        }
+                        .subtotal-row {
+                            background-color: #f0f0f0;
+                            font-weight: bold;
+                            border-top: 3px solid #000;
+                        }
+                        .additional-notes-section {
+                            margin-top: 20px;
+                            padding: 15px;
+                            background-color: #f9f9f9;
+                            border: 1px solid #ddd;
+                            border-radius: 5px;
+                        }
+                        .additional-notes-title {
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                            color: #333;
+                        }
+                        .additional-notes-content {
+                            white-space: pre-wrap;
+                            line-height: 1.6;
+                        }
+                        .footer {
+                            margin-top: 40px;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+                        .signature-box {
+                            width: 200px;
+                            text-align: center;
+                        }
+                        .signature-line {
+                            border-top: 1px solid #000;
+                            margin-top: 50px;
+                            padding-top: 5px;
+                        }
+                        @media print {
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                   <div class="header" style="
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    border-bottom: 2px solid #000; 
+    padding-bottom: 10px; 
+    margin-bottom: 20px;
+">
+    <!-- Left side: Square Logo -->
+    <div style="flex: 0 0 120px; text-align: center;">
+        <div style="
+            width: 100px;
+            height: 100px;
+            border: 2px solid #2c5530;
+            border-radius: 0%; /* ← এখানে গোলের পরিবর্তে চারকোণা */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            margin: 0 auto;
+        ">
+            <img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" 
+                 alt="Company Logo" 
+                 style="width: 90%; height: 90%; object-fit: contain;">
+        </div>
+    </div>
+
+    <!-- Center: Company name and address -->
+    <div style="flex: 1; text-align: center;">
+        <div class="company-name" style="
+            font-size: 26px; 
+            font-weight: bold; 
+            color: #2c5530;
+            margin-bottom: 5px;
+        ">GMS COMPOSITE KNITTING IND LTD</div>
+
+        <div class="company-address" style="
+            font-size: 15px; 
+            color: #444;
+            margin-bottom: 5px;
+        ">Sardagonj, Kashimpur, Gazipur</div>
+
+        <div style="
+            font-size: 17px; 
+            font-weight: bold; 
+            color: #2c5530;
+            margin: 5px 0;
+        ">FINISH FABRIC MCD</div>
+
+        <div class="challan-title" style="
+            font-size: 20px; 
+            font-weight: bold; 
+            text-decoration: underline;
+        ">DELIVERY CHALLAN</div>
+    </div>
+
+    <!-- Right side blank for symmetry -->
+    <div style="flex: 0 0 120px;"></div>
+</div>
+
+
+                    <div class="info-section">
+                        <div class="info-left">
+                            <div class="info-row">
+                                <span class="label">Challan No:</span>
+                                <span>${challan.challanNumber}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Date:</span>
+                                <span>${new Date(challan.invoiceDate).toLocaleDateString('en-GB')}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Issue To:</span>
+                                <span>${challan.issueTo}</span>
+                            </div>
+                        </div>
+                        <div class="info-right">
+                            <div class="info-row">
+                                <span class="label">Receiver:</span>
+                                <span>${challan.receiverName}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Contact:</span>
+                                <span>${challan.contactNumber || 'N/A'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Time:</span>
+                                <span>${new Date().toLocaleTimeString('en-GB', {hour12: false})}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${challan.gmsFields ? `
+                    <div class="info-section" style="margin-bottom: 20px;">
+                        <div style="width: 100%;">
+                            <div style="font-weight: bold; margin-bottom: 10px; text-align: center; background-color: #f0f8ff; padding: 8px;">
+                                🚛 TRANSPORT & DELIVERY DETAILS
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                <div style="flex: 2; min-width: 200px;">
+                                    <span class="label">Party Address:</span>
+                                    <span>${challan.gmsFields.partyAddress || 'N/A'}</span>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <span class="label">Driver Name:</span>
+                                    <span>${challan.gmsFields.driverName || 'N/A'}</span>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <span class="label">Vehicle No:</span>
+                                    <span>${challan.gmsFields.vehicleNo || 'N/A'}</span>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <span class="label">Gate Pass No:</span>
+                                    <span>${challan.gmsFields.gatePassNo || 'N/A'}</span>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <span class="label">Lock No:</span>
+                                    <span>${challan.gmsFields.lockNo || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 30px; background-color: white; color: #000000; font-family: Arial, sans-serif;">SL</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Issue Type</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Buyer</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Store Ref</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Certification</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Dia</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">F/Type</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">GSM</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Color</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Batch No</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Location</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Rolls</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">UOM</th>
+                                ${showGreyQty ? '<th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Grey Qty</th>' : ''}
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Issue Qty</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${challan.items.map((item, index) => `
+                                <tr style="background-color: ${index % 2 === 0 ? '#D6EEEE' : 'white'};">
+                                    <td style="text-align: center; font-family: Arial, sans-serif;">${index + 1}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.issueType || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.buyer || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.storeRef || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.certification || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.dia || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.fabricType || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.gsm || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.color || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.batchNo || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.location || '-'}</td>
+                                    <td style="text-align: center; font-family: Arial, sans-serif;">${item.rolls || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.uom || '-'}</td>
+                                    ${showGreyQty ? `<td style="text-align: right; font-family: Arial, sans-serif;">${item.greyQty || '-'}</td>` : ''}
+                                    <td style="text-align: right; font-family: Arial, sans-serif;">${item.issueQty || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.remarks || '-'}</td>
+                                </tr>
+                            `).join('')}
+                            ${showSubtotal ? `
+                            <tr class="subtotal-row">
+                                <td colspan="${showGreyQty ? '11' : '10'}" style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">SUBTOTAL:</td>
+                                <td style="text-align: center; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseInt(item.rolls) || 0), 0)}</td>
+                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">-</td>
+                                ${showGreyQty ? `<td style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.greyQty) || 0), 0).toFixed(2)}</td>` : ''}
+                                <td style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.issueQty) || 0), 0).toFixed(2)}</td>
+                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">Total Items: ${challan.items.length}</td>
+                            </tr>
+                            ` : ''}
+                        </tbody>
+                    </table>
+
+                    ${challan.additionalNotes && challan.additionalNotes.trim() !== '' ? `
+                    <div class="additional-notes-section">
+                        <div class="additional-notes-title">Additional Notes:</div>
+                        <div class="additional-notes-content">${challan.additionalNotes}</div>
+                    </div>
+                    ` : ''}
+
+                    <div class="footer">
+                        <div class="signature-box">
+                            <div class="signature-line">Prepared By</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line">Received By</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line">Checked By</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line">AGM MCD</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line">Approved By</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px; font-size: 10px; color: #666;">
+                        Generated on: ${new Date().toLocaleString('en-GB')}
+                    </div>
+
+                    <button onclick="window.print()" class="no-print" style="position: fixed; top: 10px; right: 10px; padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button>
+                </body>
+                </html>
+            `;
+
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+        }
+
+        // Print Bill function
+        // MODIFIED FUNCTION
+        async function printBill(challanNumber) {
+            const challan = challans.find(c => c.challanNumber === challanNumber);
+            if (!challan) return;
+
+            // Generate or get existing bill number
+            let billNumber = challan.billNumber;
+            if (!billNumber) {
+                const currentYear = new Date().getFullYear().toString().slice(-2);
+                billNumber = `BILL-${currentYear}-${String(billCounter).padStart(6, '0')}`;
+                
+                // Update challan with bill number
+                challan.billNumber = billNumber;
+                
+                // Update in Firebase
+                try {
+                    const challansRef = window.dbRef(window.database, 'challans');
+                    const snapshot = await window.dbGet(challansRef);
+                    
+                    if (snapshot.exists()) {
+                        const firebaseChallans = snapshot.val();
+                        for (const [key, fbChallan] of Object.entries(firebaseChallans)) {
+                            if (fbChallan.challanNumber === challanNumber) {
+                                const challanRef = window.dbRef(window.database, `challans/${key}`);
+                                await window.dbUpdate(challanRef, { billNumber: billNumber });
+                                break;
+                            }
+                        }
+                    }
+                    
+                    await updateBillCounter();
+                    billCounter++;
+                } catch (error) {
+                    console.error('Error updating bill number:', error);
+                }
+            }
+
+            // Calculate total amount and determine currency
+            const totalAmount = challan.items.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+            const currencyType = challan.items.length > 0 ? (challan.items[0].currency || 'BDT') : 'BDT';
+            const currencySymbol = currencyType === 'USD' ? '$' : '৳';
+
+
+            const printWindow = window.open('', '_blank');
+            const printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Bill - ${billNumber}</title>
+                    <style>
+                        body { 
+                            font-family: 'Times New Roman', serif; 
+                            margin: 0; 
+                            padding: 20px; 
+                            font-size: 14px;
+                            line-height: 1.5;
+                        }
+                        .header { 
+                            text-align: center; 
+                            border-bottom: 2px solid #000; 
+                            padding-bottom: 15px; 
+                            margin-bottom: 20px;
+                        }
+                        .company-name { 
+                            font-size: 28px; 
+                            font-weight: bold; 
+                            margin-bottom: 5px;
+                            color: #2c5530;
+                        }
+                        .company-address { 
+                            font-size: 16px; 
+                            color: #666;
+                            margin-bottom: 10px;
+                        }
+                        .bill-title {
+                            font-size: 22px;
+                            font-weight: bold;
+                            text-decoration: underline;
+                            margin-top: 10px;
+                        }
+                        .info-section { 
+                            display: flex; 
+                            justify-content: space-between; 
+                            margin-bottom: 20px;
+                            border: 1px solid #000;
+                            padding: 12px;
+                        }
+                        .info-left, .info-right { 
+                            width: 48%; 
+                        }
+                        .info-row { 
+                            margin-bottom: 10px; 
+                            font-size: 14px;
+                        }
+                        .label { 
+                            font-weight: bold; 
+                            display: inline-block; 
+                            width: 100px;
+                        }
+                        table { 
+                            width: 100%; 
+                            border-collapse: collapse; 
+                            margin-bottom: 20px;
+                            border: 2px solid #000;
+                        }
+                        th, td { 
+                            border: 1px solid #000; 
+                            padding: 10px; 
+                            text-align: left;
+                            font-size: 13px;
+                            font-family: Arial, sans-serif;
+                        }
+                        th { 
+                            background-color: white; 
+                            color: #000000;
+                            font-weight: bold;
+                            text-align: center;
+                            font-size: 14px;
+                            border: 2px solid #000;
+                        }
+                        .subtotal-row {
+                            background-color: #f0f0f0;
+                            font-weight: bold;
+                            border-top: 3px solid #000;
+                        }
+                        .total-section {
+                            border: 2px solid #000;
+                            padding: 15px;
+                            margin-bottom: 20px;
+                            background-color: #f9f9f9;
+                        }
+                        .additional-notes-section {
+                            margin-top: 20px;
+                            padding: 15px;
+                            background-color: #f9f9f9;
+                            border: 1px solid #ddd;
+                            border-radius: 5px;
+                        }
+                        .additional-notes-title {
+                            font-weight: bold;
+                            margin-bottom: 10px;
+                            color: #333;
+                        }
+                        .additional-notes-content {
+                            white-space: pre-wrap;
+                            line-height: 1.6;
+                        }
+                        .footer {
+                            margin-top: 40px;
+                            display: flex;
+                            justify-content: space-between;
+                        }
+                        .signature-box {
+                            width: 200px;
+                            text-align: center;
+                        }
+                        .signature-line {
+                            border-top: 1px solid #000;
+                            margin-top: 50px;
+                            padding-top: 5px;
+                        }
+                        @media print {
+                            body { margin: 0; }
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="header" style="
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    border-bottom: 2px solid #000; 
+    padding-bottom: 10px; 
+    margin-bottom: 20px;
+">
+    <!-- Left side: Square Logo -->
+    <div style="flex: 0 0 120px; text-align: center;">
+        <div style="
+            width: 100px;
+            height: 100px;
+            border: 2px solid #2c5530;
+            border-radius: 0%; /* ← এখানে গোলের পরিবর্তে চারকোণা */
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+            margin: 0 auto;
+        ">
+            <img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" 
+                 alt="Company Logo" 
+                 style="width: 90%; height: 90%; object-fit: contain;">
+        </div>
+    </div>
+
+    <!-- Center: Company name and address -->
+    <div style="flex: 1; text-align: center;">
+        <div class="company-name" style="
+            font-size: 26px; 
+            font-weight: bold; 
+            color: #2c5530;
+            margin-bottom: 5px;
+        ">GMS COMPOSITE KNITTING IND LTD</div>
+
+        <div class="company-address" style="
+            font-size: 15px; 
+            color: #444;
+            margin-bottom: 5px;
+        ">Sardagonj, Kashimpur, Gazipur</div>
+
+        <div style="
+            font-size: 17px; 
+            font-weight: bold; 
+            color: #2c5530;
+            margin: 5px 0;
+        ">FINISH FABRIC MCD</div>
+
+        <div class="challan-title" style="
+            font-size: 20px; 
+            font-weight: bold; 
+            text-decoration: underline;
+        ">BILL</div>
+    </div>
+
+    <!-- Right side blank for symmetry -->
+    <div style="flex: 0 0 120px;"></div>
+</div>
+
+
+                    <div class="info-section">
+                        <div class="info-left">
+                            <div class="info-row">
+                                <span class="label">Bill No:</span>
+                                <span>${billNumber}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Challan No:</span>
+                                <span>${challan.challanNumber}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Date:</span>
+                                <span>${new Date(challan.invoiceDate).toLocaleDateString('en-GB')}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Issue To:</span>
+                                <span>${challan.issueTo}</span>
+                            </div>
+                        </div>
+                        <div class="info-right">
+                            <div class="info-row">
+                                <span class="label">Receiver:</span>
+                                <span>${challan.receiverName}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Contact:</span>
+                                <span>${challan.contactNumber || 'N/A'}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Time:</span>
+                                <span>${new Date().toLocaleTimeString('en-GB', {hour12: false})}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    ${challan.gmsFields ? `
+                    <div class="info-section" style="margin-bottom: 20px;">
+                        <div style="width: 100%;">
+                            <div style="font-weight: bold; margin-bottom: 10px; text-align: center; background-color: #f0f8ff; padding: 8px;">
+                                🚛 TRANSPORT & DELIVERY DETAILS
+                            </div>
+                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
+                                <div style="flex: 2; min-width: 200px;">
+                                    <span class="label">Party Address:</span>
+                                    <span>${challan.gmsFields.partyAddress || 'N/A'}</span>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <span class="label">Driver Name:</span>
+                                    <span>${challan.gmsFields.driverName || 'N/A'}</span>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <span class="label">Vehicle No:</span>
+                                    <span>${challan.gmsFields.vehicleNo || 'N/A'}</span>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <span class="label">Gate Pass No:</span>
+                                    <span>${challan.gmsFields.gatePassNo || 'N/A'}</span>
+                                </div>
+                                <div style="flex: 1; min-width: 150px;">
+                                    <span class="label">Lock No:</span>
+                                    <span>${challan.gmsFields.lockNo || 'N/A'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 30px; background-color: white; color: #000000; font-family: Arial, sans-serif;">SL</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Issue Type</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Buyer</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Store Ref</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Certification</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Dia</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">F/Type</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">GSM</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Color</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Batch No</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Location</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Rolls</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">UOM</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Grey Qty</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Rate</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Amount</th>
+                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${challan.items.map((item, index) => {
+                                const itemCurrencySymbol = item.currency === 'USD' ? '$' : '৳';
+                                return `
+                                <tr style="background-color: ${index % 2 === 0 ? '#D6EEEE' : 'white'};">
+                                    <td style="text-align: center; font-family: Arial, sans-serif;">${index + 1}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.issueType || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.buyer || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.storeRef || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.certification || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.dia || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.fabricType || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.gsm || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.color || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.batchNo || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.location || '-'}</td>
+                                    <td style="text-align: center; font-family: Arial, sans-serif;">${item.rolls || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.uom || '-'}</td>
+                                    <td style="text-align: right; font-family: Arial, sans-serif;">${item.greyQty || '-'}</td>
+                                    <td style="text-align: right; font-family: Arial, sans-serif;">${itemCurrencySymbol} ${item.rate || '-'}</td>
+                                    <td style="text-align: right; font-family: Arial, sans-serif;">${itemCurrencySymbol} ${item.amount || '-'}</td>
+                                    <td style="font-family: Arial, sans-serif;">${item.remarks || '-'}</td>
+                                </tr>
+                                `}).join('')}
+                            <tr class="subtotal-row">
+                                <td colspan="11" style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">SUBTOTAL:</td>
+                                <td style="text-align: center; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseInt(item.rolls) || 0), 0)}</td>
+                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">-</td>
+                                <td style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.greyQty) || 0), 0).toFixed(2)}</td>
+                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">-</td>
+                                <td style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${currencySymbol} ${totalAmount.toFixed(2)}</td>
+                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">Total Items: ${challan.items.length}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="total-section">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div style="font-size: 16px; font-weight: bold;">
+                                Total Amount: ${currencySymbol} ${totalAmount.toFixed(2)}
+                            </div>
+                        </div>
+                        <div style="font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 10px;">
+                            Amount In Words: ${numberToWords(totalAmount, currencyType)}
+                        </div>
+                    </div>
+
+                    ${challan.additionalNotes && challan.additionalNotes.trim() !== '' ? `
+                    <div class="additional-notes-section">
+                        <div class="additional-notes-title">Additional Notes:</div>
+                        <div class="additional-notes-content">${challan.additionalNotes}</div>
+                    </div>
+                    ` : ''}
+
+                    <div class="footer">
+                        <div class="signature-box">
+                            <div class="signature-line">Prepared By</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line">Received By</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line">Checked By</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line">AGM MCD</div>
+                        </div>
+                        <div class="signature-box">
+                            <div class="signature-line">Approved By</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; margin-top: 30px; font-size: 10px; color: #666;">
+                        Generated on: ${new Date().toLocaleString('en-GB')}
+                    </div>
+
+                    <button onclick="window.print()" class="no-print" style="position: fixed; top: 10px; right: 10px; padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button>
+                </body>
+                </html>
+            `;
+
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+        }
+
+        // Delete challan
+        async function deleteChallan(challanNumber) {
+            if (confirm(`Are you sure you want to delete challan ${challanNumber}?`)) {
+                try {
+                    const challansRef = window.dbRef(window.database, 'challans');
+                    const snapshot = await window.dbGet(challansRef);
+                    
+                    if (snapshot.exists()) {
+                        const firebaseChallans = snapshot.val();
+                        let keyToDelete = null;
+                        
+                        for (const [key, challan] of Object.entries(firebaseChallans)) {
+                            if (challan.challanNumber === challanNumber) {
+                                keyToDelete = key;
+                                break;
+                            }
+                        }
+                        
+                        if (keyToDelete) {
+                            const challanRef = window.dbRef(window.database, `challans/${keyToDelete}`);
+                            await window.dbSet(challanRef, null);
+                        }
+                    }
+                    
+                    alert(`Challan ${challanNumber} deleted successfully!`);
+                } catch (error) {
+                    console.error('Error deleting challan:', error);
+                    alert('Error deleting challan from Firebase');
+                }
+            }
+        }
+
+        // Show update notification
+        let notificationTimeout;
+        let isInitialLoad = true;
+        
+        function showUpdateNotification() {
+            // Don't show notification on initial load
+            if (isInitialLoad) {
+                isInitialLoad = false;
+                return;
+            }
+            
+            const notification = document.getElementById('updateNotification');
+            notification.classList.remove('hidden');
+            notification.classList.remove('translate-x-full');
+            
+            // Clear existing timeout
+            if (notificationTimeout) {
+                clearTimeout(notificationTimeout);
+            }
+            
+            // Hide notification after 3 seconds
+            notificationTimeout = setTimeout(() => {
+                notification.classList.add('translate-x-full');
+                setTimeout(() => {
+                    notification.classList.add('hidden');
+                }, 300);
+            }, 3000);
+        }
+
+        // Update connection status
+        function updateConnectionStatus(isConnected) {
+            const indicator = document.getElementById('connectionIndicator');
+            const text = document.getElementById('connectionText');
+            const status = document.getElementById('connectionStatus');
+            
+            if (isConnected) {
+                indicator.className = 'w-3 h-3 rounded-full bg-green-500';
+                text.textContent = 'Connected';
+                status.className = 'fixed bottom-4 right-4 px-4 py-2 rounded-lg text-sm font-medium z-40 bg-green-100 text-green-800';
+            } else {
+                indicator.className = 'w-3 h-3 rounded-full bg-red-500';
+                text.textContent = 'Disconnected';
+                status.className = 'fixed bottom-4 right-4 px-4 py-2 rounded-lg text-sm font-medium z-40 bg-red-100 text-red-800';
+            }
+        }
+
+        // Monitor connection status
+        function monitorConnection() {
+            const connectedRef = window.dbRef(window.database, '.info/connected');
+            window.dbOnValue(connectedRef, (snapshot) => {
+                const connected = snapshot.val();
+                updateConnectionStatus(connected);
+                
+                if (!connected) {
+                    console.log('Disconnected from Firebase');
+                } else {
+                    console.log('Connected to Firebase');
+                }
+            });
+        }
+
+             // Initialize system on page load
+            document.addEventListener('DOMContentLoaded', () => {
+             checkLoginStatus();
+          monitorConnection();
+});
+    </script>
+</body>
+</html>
+    
+  </body>
+  
+</html>
