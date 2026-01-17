@@ -3,6 +3,17 @@
 
   <head>
     <meta charset="UTF-8">
+    <title>GMS FINISH FABRIC MCD V-2.7</title>
+    
+
+  </head>
+    
+  <body>
+  <!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8">
     <title>GMS FINISH FABRIC MCD V-2.6</title>
     
 
@@ -426,17 +437,27 @@ window.onAuthStateChanged = onAuthStateChanged;
 
         <!-- Recent Challans -->
         <div class="bg-white rounded-xl shadow-sm border border-borderColor mb-8">
-            <!-- ########## START: MODIFICATION FOR RECENT CHALLAN SEARCH ########## -->
+<!-- ########## START: MODIFICATION FOR RECENT CHALLAN SEARCH ########## -->
             <div class="p-6 border-b border-borderColor">
                 <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
                     <h3 class="text-lg font-semibold text-secondary">Recent Challans</h3>
-                    <div class="flex items-center">
-                        <input type="text" id="recentChallanSearchInput" oninput="updateChallansTable()" placeholder="চালান নাম্বার দিয়ে সার্চ করুন..." class="w-full sm:w-64 px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent text-sm">
+                    <div class="flex items-center gap-2">
+                        <input type="text" id="recentChallanSearchInput" placeholder="Challan No (e.g. GMS-25-00001)..." class="w-full sm:w-64 px-3 py-2 border border-borderColor rounded-lg focus:ring-1 focus:ring-primary focus:border-transparent text-sm">
+                        
+                        <button onclick="searchChallanFromDatabase()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 text-sm font-medium flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            Find
+                        </button>
+                        
+                        <button onclick="resetChallanTable()" class="px-3 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200 text-sm" title="Reload Recent">
+                            ↻
+                        </button>
                     </div>
                 </div>
             </div>
             <!-- ########## END: MODIFICATION FOR RECENT CHALLAN SEARCH ########## -->
-            
             <div class="recent-challans-table">
                 <table class="min-w-full">
                     <thead class="sticky top-0">
@@ -1625,54 +1646,21 @@ async function createChallan(event) {
             itemCounter = 1;
             updateGrandTotal(); // Reset totals to 0
         }
-
-        // ########## START: MODIFIED FUNCTION TO FIX MISSING CHALLAN & ADD SEARCH ##########
-        // Update challans table
+// Update challans table (Updated for Database Search)
         function updateChallansTable() {
             const tableBody = document.getElementById('challansTable');
-            const searchInput = document.getElementById('recentChallanSearchInput');
-            // লাইভ সার্চ করার জন্য সার্চ ইনপুট থেকে মান নেওয়া হচ্ছে
-            const searchTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
-
-            if (challans.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-textSecondary">
-                            No challans found. Create a new challan.
-                        </td>
-                    </tr>
-                `;
-                return;
+            // আমরা এখন আর ইনপুট ভ্যালু দিয়ে ক্লায়েন্ট সাইড ফিল্টার করব না যদি ডাটাবেজ সার্চ হয়ে থাকে
+            // তাই সরাসরি challans অ্যারে ব্যবহার করব যা searchChallanFromDatabase আপডেট করেছে
+            
+            if (!challans || challans.length === 0) {
+                 // যদি সার্চের পর কোনো ডাটা না থাকে (তবে এরর মেসেজ হ্যান্ডেল করা আছে সার্চ ফাংশনে)
+                 return;
             }
 
             let displayChallans = [...challans];
-
-            // যদি সার্চবক্সে কিছু লেখা থাকে, তাহলে চালানগুলো ফিল্টার করা হবে
-            if (searchTerm) {
-                displayChallans = displayChallans.filter(challan => 
-                    challan.challanNumber && challan.challanNumber.toLowerCase().includes(searchTerm)
-                );
-            }
             
             // চালানগুলোকে নতুন থেকে পুরানো অনুযায়ী সাজানো হচ্ছে
             displayChallans.sort((a, b) => new Date(b.createdAt || b.invoiceDate) - new Date(a.createdAt || a.invoiceDate));
-
-            // যদি সার্চ করা না হয়, তাহলে শুধুমাত্র সাম্প্রতিক ২০টি চালান দেখানো হবে
-            if (!searchTerm) {
-                displayChallans = displayChallans.slice(0, 20);
-            }
-            
-            // যদি ফিল্টার করার পর কোনো চালান না পাওয়া যায়
-            if (displayChallans.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-textSecondary">
-                           '${searchTerm}' এর জন্য কোনো চালান খুঁজে পাওয়া যায়নি।
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
             
             // টেবিলে চালানগুলো দেখানো হচ্ছে
             tableBody.innerHTML = displayChallans.map((challan, index) => `
@@ -1680,7 +1668,7 @@ async function createChallan(event) {
                     <td class="px-6 py-4 text-sm font-medium text-secondary">${challan.challanNumber}</td>
                     <td class="px-6 py-4 text-sm text-textSecondary">${challan.receiverName}</td>
                     <td class="px-6 py-4 text-sm text-textSecondary">${challan.issueTo}</td>
-                    <td class="px-6 py-4 text-sm text-textSecondary">${challan.items.length} items</td>
+                    <td class="px-6 py-4 text-sm text-textSecondary">${challan.items ? challan.items.length : 0} items</td>
                     <td class="px-6 py-4 text-sm text-textSecondary">${new Date(challan.invoiceDate).toLocaleDateString()}</td>
                     <td class="px-6 py-4 text-sm">
                         <button onclick="downloadPDF('${challan.challanNumber}')" class="text-primary hover:text-green-700 mr-2">PDF</button>
@@ -2366,757 +2354,576 @@ async function createChallan(event) {
                 alert('PDF তৈরি করতে সমস্যা হয়েছে। আবার চেষ্টা করুন।');
             }
         }
+// Print Challan function (Compact Version matching Bill Format)
+function printChallan(challanNumber) {
+    const challan = challans.find(c => c.challanNumber === challanNumber);
+    if (!challan) return;
 
-        // Print challan
-        function printChallan(challanNumber) {
-            const challan = challans.find(c => c.challanNumber === challanNumber);
-            if (!challan) return;
+    const showGreyQty = document.getElementById('showGreyQtyInPrint').checked;
+    const showSubtotal = document.getElementById('showSubtotalInPrint').checked;
 
-            const showGreyQty = document.getElementById('showGreyQtyInPrint').checked;
-            const showSubtotal = document.getElementById('showSubtotalInPrint').checked;
-
-            const printWindow = window.open('', '_blank');
-            const printContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Challan - ${challan.challanNumber}</title>
-                    <style>
-                        body { 
-                            font-family: 'Times New Roman', serif; 
-                            margin: 0; 
-                            padding: 20px; 
-                            font-size: 14px;
-                            line-height: 1.5;
-                        }
-                        .header { 
-                            text-align: center; 
-                            border-bottom: 2px solid #000; 
-                            padding-bottom: 15px; 
-                            margin-bottom: 20px;
-                        }
-                        .company-name { 
-                            font-size: 28px; 
-                            font-weight: bold; 
-                            margin-bottom: 5px;
-                            color: #2c5530;
-                        }
-                        .company-address { 
-                            font-size: 16px; 
-                            color: #666;
-                            margin-bottom: 10px;
-                        }
-                        .challan-title {
-                            font-size: 22px;
-                            font-weight: bold;
-                            text-decoration: underline;
-                            margin-top: 10px;
-                        }
-                        .info-section { 
-                            display: flex; 
-                            justify-content: space-between; 
-                            margin-bottom: 20px;
-                            border: 1px solid #000;
-                            padding: 12px;
-                        }
-                        .info-left, .info-right { 
-                            width: 48%; 
-                        }
-                        .info-row { 
-                            margin-bottom: 10px; 
-                            font-size: 14px;
-                        }
-                        .label { 
-                            font-weight: bold; 
-                            display: inline-block; 
-                            width: 100px;
-                        }
-                        table { 
-                            width: 100%; 
-                            border-collapse: collapse; 
-                            margin-bottom: 20px;
-                            border: 2px solid #000;
-                        }
-                        th, td { 
-                            border: 1px solid #000; 
-                            padding: 10px; 
-                            text-align: left;
-                            font-size: 13px;
-                            font-family: Arial, sans-serif;
-                        }
-                        th { 
-                            background-color: white; 
-                            color: #000000;
-                            font-weight: bold;
-                            text-align: center;
-                            font-size: 14px;
-                            border: 2px solid #000;
-                        }
-                        .subtotal-row {
-                            background-color: #f0f0f0;
-                            font-weight: bold;
-                            border-top: 3px solid #000;
-                        }
-                        .additional-notes-section {
-                            margin-top: 20px;
-                            padding: 15px;
-                            background-color: #f9f9f9;
-                            border: 1px solid #ddd;
-                            border-radius: 5px;
-                        }
-                        .additional-notes-title {
-                            font-weight: bold;
-                            margin-bottom: 10px;
-                            color: #333;
-                        }
-                        .additional-notes-content {
-                            white-space: pre-wrap;
-                            line-height: 1.6;
-                        }
-                        .footer {
-                            margin-top: 40px;
-                            display: flex;
-                            justify-content: space-between;
-                        }
-                        .signature-box {
-                            width: 200px;
-                            text-align: center;
-                        }
-                        .signature-line {
-                            border-top: 1px solid #000;
-                            margin-top: 50px;
-                            padding-top: 5px;
-                        }
-                        @media print {
-                            body { margin: 0; }
-                            .no-print { display: none; }
-                        }
-                    </style>
-                </head>
-                <body>
-                   <div class="header" style="
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    border-bottom: 2px solid #000; 
-    padding-bottom: 10px; 
-    margin-bottom: 20px;
-">
-    <!-- Left side: Square Logo -->
-    <div style="flex: 0 0 120px; text-align: center;">
-        <div style="
-            width: 100px;
-            height: 100px;
-            border: 2px solid #2c5530;
-            border-radius: 0%; /* ← এখানে গোলের পরিবর্তে চারকোণা */
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #fff;
-            margin: 0 auto;
-        ">
-            <img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" 
-                 alt="Company Logo" 
-                 style="width: 90%; height: 90%; object-fit: contain;">
-        </div>
-    </div>
-
-    <!-- Center: Company name and address -->
-    <div style="flex: 1; text-align: center;">
-        <div class="company-name" style="
-            font-size: 26px; 
-            font-weight: bold; 
-            color: #2c5530;
-            margin-bottom: 5px;
-        ">GMS COMPOSITE KNITTING IND LTD</div>
-
-        <div class="company-address" style="
-            font-size: 15px; 
-            color: #444;
-            margin-bottom: 5px;
-        ">Sardagonj, Kashimpur, Gazipur</div>
-
-        <div style="
-            font-size: 17px; 
-            font-weight: bold; 
-            color: #2c5530;
-            margin: 5px 0;
-        ">FINISH FABRIC MCD</div>
-
-        <div class="challan-title" style="
-            font-size: 20px; 
-            font-weight: bold; 
-            text-decoration: underline;
-        ">DELIVERY CHALLAN</div>
-    </div>
-
-    <!-- Right side blank for symmetry -->
-    <div style="flex: 0 0 120px;"></div>
-</div>
-
-
-                    <div class="info-section">
-                        <div class="info-left">
-                            <div class="info-row">
-                                <span class="label">Challan No:</span>
-                                <span>${challan.challanNumber}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Date:</span>
-                                <span>${new Date(challan.invoiceDate).toLocaleDateString('en-GB')}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Issue To:</span>
-                                <span>${challan.issueTo}</span>
-                            </div>
-                        </div>
-                        <div class="info-right">
-                            <div class="info-row">
-                                <span class="label">Receiver:</span>
-                                <span>${challan.receiverName}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Contact:</span>
-                                <span>${challan.contactNumber || 'N/A'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Time:</span>
-                                <span>${new Date().toLocaleTimeString('en-GB', {hour12: false})}</span>
-                            </div>
-                        </div>
+    const printWindow = window.open('', '_blank');
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Challan - ${challan.challanNumber}</title>
+            <style>
+                body { 
+                    font-family: 'Times New Roman', serif; 
+                    margin: 0; 
+                    padding: 10px 20px; 
+                    font-size: 11px; /* ফন্ট সাইজ ছোট করা হয়েছে */
+                    line-height: 1.2; /* লাইনের গ্যাপ কমানো হয়েছে */
+                }
+                .header { 
+                    text-align: center; 
+                    border-bottom: 1px solid #000; 
+                    padding-bottom: 5px; 
+                    margin-bottom: 10px;
+                }
+                .company-name { 
+                    font-size: 20px; /* নাম ছোট করা হয়েছে */
+                    font-weight: bold; 
+                    margin-bottom: 2px;
+                    color: #2c5530;
+                }
+                .company-address { 
+                    font-size: 12px; 
+                    color: #444;
+                    margin-bottom: 5px;
+                }
+                .challan-title {
+                    font-size: 16px;
+                    font-weight: bold;
+                    text-decoration: underline;
+                    margin-top: 5px;
+                }
+                .info-section { 
+                    display: flex; 
+                    justify-content: space-between; 
+                    margin-bottom: 10px;
+                    border: 1px solid #000;
+                    padding: 5px;
+                }
+                .info-left, .info-right { 
+                    width: 48%; 
+                }
+                .info-row { 
+                    margin-bottom: 2px; 
+                    font-size: 11px;
+                }
+                .label { 
+                    font-weight: bold; 
+                    display: inline-block; 
+                    width: 80px;
+                }
+                table { 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin-bottom: 10px;
+                    border: 1px solid #000;
+                }
+                th, td { 
+                    border: 1px solid #000; 
+                    padding: 3px 5px; /* টেবিলের প্যাডিং কমানো হয়েছে */
+                    text-align: left;
+                    font-size: 10px; /* টেবিলের ফন্ট ১০ করা হয়েছে */
+                    font-family: Arial, sans-serif;
+                }
+                th { 
+                    background-color: #f0f0f0; 
+                    color: #000000;
+                    font-weight: bold;
+                    text-align: center;
+                }
+                .subtotal-row {
+                    background-color: #f0f0f0;
+                    font-weight: bold;
+                }
+                .additional-notes-section {
+                    margin-top: 10px;
+                    padding: 5px;
+                    background-color: #f9f9f9;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                }
+                .additional-notes-title {
+                    font-weight: bold;
+                    margin-bottom: 2px;
+                    font-size: 10px;
+                }
+                .additional-notes-content {
+                    white-space: pre-wrap;
+                    line-height: 1.2;
+                    font-size: 10px;
+                }
+                .footer {
+                    margin-top: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .signature-box {
+                    width: 150px;
+                    text-align: center;
+                }
+                .signature-line {
+                    border-top: 1px solid #000;
+                    margin-top: 30px;
+                    padding-top: 2px;
+                    font-size: 10px;
+                }
+                @media print {
+                    body { margin: 0; padding: 10px; }
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 10px;">
+                <div style="flex: 0 0 80px; text-align: center;">
+                    <div style="width: 60px; height: 60px; border: 1px solid #2c5530; overflow: hidden; display: flex; align-items: center; justify-content: center; background-color: #fff; margin: 0 auto;">
+                        <img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" alt="Logo" style="width: 90%; height: 90%; object-fit: contain;">
                     </div>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                    <div class="company-name">GMS COMPOSITE KNITTING IND LTD</div>
+                    <div class="company-address">Sardagonj, Kashimpur, Gazipur</div>
+                    <div style="font-size: 12px; font-weight: bold; color: #2c5530; margin: 2px 0;">FINISH FABRIC MCD</div>
+                    <div class="challan-title">DELIVERY CHALLAN</div>
+                </div>
+                <div style="flex: 0 0 80px;"></div>
+            </div>
 
-                    ${challan.gmsFields ? `
-                    <div class="info-section" style="margin-bottom: 20px;">
-                        <div style="width: 100%;">
-                            <div style="font-weight: bold; margin-bottom: 10px; text-align: center; background-color: #f0f8ff; padding: 8px;">
-                                🚛 TRANSPORT & DELIVERY DETAILS
-                            </div>
-                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                                <div style="flex: 2; min-width: 200px;">
-                                    <span class="label">Party Address:</span>
-                                    <span>${challan.gmsFields.partyAddress || 'N/A'}</span>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <span class="label">Driver Name:</span>
-                                    <span>${challan.gmsFields.driverName || 'N/A'}</span>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <span class="label">Vehicle No:</span>
-                                    <span>${challan.gmsFields.vehicleNo || 'N/A'}</span>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <span class="label">Gate Pass No:</span>
-                                    <span>${challan.gmsFields.gatePassNo || 'N/A'}</span>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <span class="label">Lock No:</span>
-                                    <span>${challan.gmsFields.lockNo || 'N/A'}</span>
-                                </div>
-                            </div>
-                        </div>
+            <div class="info-section">
+                <div class="info-left">
+                    <div class="info-row"><span class="label">Challan No:</span><span>${challan.challanNumber}</span></div>
+                    <div class="info-row"><span class="label">Date:</span><span>${new Date(challan.invoiceDate).toLocaleDateString('en-GB')}</span></div>
+                    <div class="info-row"><span class="label">Issue To:</span><span>${challan.issueTo}</span></div>
+                </div>
+                <div class="info-right">
+                    <div class="info-row"><span class="label">Receiver:</span><span>${challan.receiverName}</span></div>
+                    <div class="info-row"><span class="label">Contact:</span><span>${challan.contactNumber || 'N/A'}</span></div>
+                    <div class="info-row"><span class="label">Time:</span><span>${new Date().toLocaleTimeString('en-GB', {hour12: false})}</span></div>
+                </div>
+            </div>
+
+            ${challan.gmsFields ? `
+            <div class="info-section" style="margin-bottom: 10px;">
+                <div style="width: 100%;">
+                    <div style="font-weight: bold; margin-bottom: 2px; text-align: center; background-color: #f0f8ff; font-size: 10px;">
+                        🚛 TRANSPORT & DELIVERY DETAILS
                     </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 5px; font-size: 10px;">
+                        <div style="flex: 2; min-width: 150px;"><span class="label" style="width: 70px;">Address:</span><span>${challan.gmsFields.partyAddress || 'N/A'}</span></div>
+                        <div style="flex: 1; min-width: 100px;"><span class="label" style="width: 50px;">Driver:</span><span>${challan.gmsFields.driverName || 'N/A'}</span></div>
+                        <div style="flex: 1; min-width: 100px;"><span class="label" style="width: 50px;">Vehicle:</span><span>${challan.gmsFields.vehicleNo || 'N/A'}</span></div>
+                        <div style="flex: 1; min-width: 100px;"><span class="label" style="width: 50px;">G.Pass:</span><span>${challan.gmsFields.gatePassNo || 'N/A'}</span></div>
+                        <div style="flex: 1; min-width: 100px;"><span class="label" style="width: 50px;">Lock No:</span><span>${challan.gmsFields.lockNo || 'N/A'}</span></div>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25px;">SL</th>
+                        <th>Issue Type</th>
+                        <th>Buyer</th>
+                        <th>Store Ref</th>
+                        <th>Cert</th>
+                        <th>Dia</th>
+                        <th>F/Type</th>
+                        <th>GSM</th>
+                        <th>Color</th>
+                        <th>Batch No</th>
+                        <th>Loc</th>
+                        <th>Rolls</th>
+                        <th>UOM</th>
+                        ${showGreyQty ? '<th>Grey Qty</th>' : ''}
+                        <th>Issue Qty</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${challan.items.map((item, index) => `
+                        <tr style="background-color: ${index % 2 === 0 ? '#f9f9f9' : 'white'};">
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td>${item.issueType || '-'}</td>
+                            <td>${item.buyer || '-'}</td>
+                            <td>${item.storeRef || '-'}</td>
+                            <td>${item.certification || '-'}</td>
+                            <td>${item.dia || '-'}</td>
+                            <td>${item.fabricType || '-'}</td>
+                            <td>${item.gsm || '-'}</td>
+                            <td>${item.color || '-'}</td>
+                            <td>${item.batchNo || '-'}</td>
+                            <td>${item.location || '-'}</td>
+                            <td style="text-align: center;">${item.rolls || '-'}</td>
+                            <td>${item.uom || '-'}</td>
+                            ${showGreyQty ? `<td style="text-align: right;">${item.greyQty || '-'}</td>` : ''}
+                            <td style="text-align: right;">${item.issueQty || '-'}</td>
+                            <td>${item.remarks || '-'}</td>
+                        </tr>
+                    `).join('')}
+                    ${showSubtotal ? `
+                    <tr class="subtotal-row">
+                        <td colspan="11" style="text-align: right; padding: 3px; border: 1px solid #000;">SUBTOTAL:</td>
+                        <td style="text-align: center; padding: 3px; border: 1px solid #000;">${challan.items.reduce((sum, item) => sum + (parseInt(item.rolls) || 0), 0)}</td>
+                        <td style="padding: 3px; border: 1px solid #000;">-</td>
+                        ${showGreyQty ? `<td style="text-align: right; padding: 3px; border: 1px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.greyQty) || 0), 0).toFixed(2)}</td>` : ''}
+                        <td style="text-align: right; padding: 3px; border: 1px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.issueQty) || 0), 0).toFixed(2)}</td>
+                        <td style="padding: 3px; border: 1px solid #000; font-size: 9px;">Items: ${challan.items.length}</td>
+                    </tr>
                     ` : ''}
+                </tbody>
+            </table>
 
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 30px; background-color: white; color: #000000; font-family: Arial, sans-serif;">SL</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Issue Type</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Buyer</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Store Ref</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Certification</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Dia</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">F/Type</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">GSM</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Color</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Batch No</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Location</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Rolls</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">UOM</th>
-                                ${showGreyQty ? '<th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Grey Qty</th>' : ''}
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Issue Qty</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${challan.items.map((item, index) => `
-                                <tr style="background-color: ${index % 2 === 0 ? '#D6EEEE' : 'white'};">
-                                    <td style="text-align: center; font-family: Arial, sans-serif;">${index + 1}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.issueType || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.buyer || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.storeRef || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.certification || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.dia || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.fabricType || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.gsm || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.color || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.batchNo || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.location || '-'}</td>
-                                    <td style="text-align: center; font-family: Arial, sans-serif;">${item.rolls || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.uom || '-'}</td>
-                                    ${showGreyQty ? `<td style="text-align: right; font-family: Arial, sans-serif;">${item.greyQty || '-'}</td>` : ''}
-                                    <td style="text-align: right; font-family: Arial, sans-serif;">${item.issueQty || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.remarks || '-'}</td>
-                                </tr>
-                            `).join('')}
-                            ${showSubtotal ? `
-                            <tr class="subtotal-row">
-                                <td colspan="${showGreyQty ? '11' : '10'}" style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">SUBTOTAL:</td>
-                                <td style="text-align: center; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseInt(item.rolls) || 0), 0)}</td>
-                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">-</td>
-                                ${showGreyQty ? `<td style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.greyQty) || 0), 0).toFixed(2)}</td>` : ''}
-                                <td style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.issueQty) || 0), 0).toFixed(2)}</td>
-                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">Total Items: ${challan.items.length}</td>
-                            </tr>
-                            ` : ''}
-                        </tbody>
-                    </table>
+            ${challan.additionalNotes && challan.additionalNotes.trim() !== '' ? `
+            <div class="additional-notes-section">
+                <div class="additional-notes-title">Additional Notes:</div>
+                <div class="additional-notes-content">${challan.additionalNotes}</div>
+            </div>
+            ` : ''}
 
-                    ${challan.additionalNotes && challan.additionalNotes.trim() !== '' ? `
-                    <div class="additional-notes-section">
-                        <div class="additional-notes-title">Additional Notes:</div>
-                        <div class="additional-notes-content">${challan.additionalNotes}</div>
-                    </div>
-                    ` : ''}
+            <div class="footer">
+                <div class="signature-box"><div class="signature-line">Prepared By</div></div>
+                <div class="signature-box"><div class="signature-line">Received By</div></div>
+                <div class="signature-box"><div class="signature-line">Checked By</div></div>
+                <div class="signature-box"><div class="signature-line">AGM MCD</div></div>
+                <div class="signature-box"><div class="signature-line">Approved By</div></div>
+            </div>
 
-                    <div class="footer">
-                        <div class="signature-box">
-                            <div class="signature-line">Prepared By</div>
-                        </div>
-                        <div class="signature-box">
-                            <div class="signature-line">Received By</div>
-                        </div>
-                        <div class="signature-box">
-                            <div class="signature-line">Checked By</div>
-                        </div>
-                        <div class="signature-box">
-                            <div class="signature-line">AGM MCD</div>
-                        </div>
-                        <div class="signature-box">
-                            <div class="signature-line">Approved By</div>
-                        </div>
-                    </div>
+            <div style="text-align: center; margin-top: 15px; font-size: 9px; color: #888;">
+                Generated on: ${new Date().toLocaleString('en-GB')}
+            </div>
 
-                    <div style="text-align: center; margin-top: 30px; font-size: 10px; color: #666;">
-                        Generated on: ${new Date().toLocaleString('en-GB')}
-                    </div>
+            <button onclick="window.print()" class="no-print" style="position: fixed; top: 10px; right: 10px; padding: 5px 10px; background: #059669; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">Print Challan</button>
+        </body>
+        </html>
+    `;
 
-                    <button onclick="window.print()" class="no-print" style="position: fixed; top: 10px; right: 10px; padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button>
-                </body>
-                </html>
-            `;
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+}
+// Print Bill function (Customized for Compact View)
+async function printBill(challanNumber) {
+    const challan = challans.find(c => c.challanNumber === challanNumber);
+    if (!challan) return;
 
-            printWindow.document.write(printContent);
-            printWindow.document.close();
-        }
-
-        // Print Bill function
-        // MODIFIED FUNCTION
-        async function printBill(challanNumber) {
-            const challan = challans.find(c => c.challanNumber === challanNumber);
-            if (!challan) return;
-
-            // Generate or get existing bill number
-            let billNumber = challan.billNumber;
-            if (!billNumber) {
-                const currentYear = new Date().getFullYear().toString().slice(-2);
-                billNumber = `BILL-${currentYear}-${String(billCounter).padStart(6, '0')}`;
-                
-                // Update challan with bill number
-                challan.billNumber = billNumber;
-                
-                // Update in Firebase
-                try {
-                    const challansRef = window.dbRef(window.database, 'challans');
-                    const snapshot = await window.dbGet(challansRef);
-                    
-                    if (snapshot.exists()) {
-                        const firebaseChallans = snapshot.val();
-                        for (const [key, fbChallan] of Object.entries(firebaseChallans)) {
-                            if (fbChallan.challanNumber === challanNumber) {
-                                const challanRef = window.dbRef(window.database, `challans/${key}`);
-                                await window.dbUpdate(challanRef, { billNumber: billNumber });
-                                break;
-                            }
-                        }
+    // Generate or get existing bill number
+    let billNumber = challan.billNumber;
+    if (!billNumber) {
+        const currentYear = new Date().getFullYear().toString().slice(-2);
+        billNumber = `BILL-${currentYear}-${String(billCounter).padStart(6, '0')}`;
+        
+        // Update challan with bill number
+        challan.billNumber = billNumber;
+        
+        // Update in Firebase
+        try {
+            const challansRef = window.dbRef(window.database, 'challans');
+            const snapshot = await window.dbGet(challansRef);
+            
+            if (snapshot.exists()) {
+                const firebaseChallans = snapshot.val();
+                for (const [key, fbChallan] of Object.entries(firebaseChallans)) {
+                    if (fbChallan.challanNumber === challanNumber) {
+                        const challanRef = window.dbRef(window.database, `challans/${key}`);
+                        await window.dbUpdate(challanRef, { billNumber: billNumber });
+                        break;
                     }
-                    
-                    await updateBillCounter();
-                    billCounter++;
-                } catch (error) {
-                    console.error('Error updating bill number:', error);
                 }
             }
-
-            // Calculate total amount and determine currency
-            const totalAmount = challan.items.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
-            const currencyType = challan.items.length > 0 ? (challan.items[0].currency || 'BDT') : 'BDT';
-            const currencySymbol = currencyType === 'USD' ? '$' : '৳';
-
-
-            const printWindow = window.open('', '_blank');
-            const printContent = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>Bill - ${billNumber}</title>
-                    <style>
-                        body { 
-                            font-family: 'Times New Roman', serif; 
-                            margin: 0; 
-                            padding: 20px; 
-                            font-size: 14px;
-                            line-height: 1.5;
-                        }
-                        .header { 
-                            text-align: center; 
-                            border-bottom: 2px solid #000; 
-                            padding-bottom: 15px; 
-                            margin-bottom: 20px;
-                        }
-                        .company-name { 
-                            font-size: 28px; 
-                            font-weight: bold; 
-                            margin-bottom: 5px;
-                            color: #2c5530;
-                        }
-                        .company-address { 
-                            font-size: 16px; 
-                            color: #666;
-                            margin-bottom: 10px;
-                        }
-                        .bill-title {
-                            font-size: 22px;
-                            font-weight: bold;
-                            text-decoration: underline;
-                            margin-top: 10px;
-                        }
-                        .info-section { 
-                            display: flex; 
-                            justify-content: space-between; 
-                            margin-bottom: 20px;
-                            border: 1px solid #000;
-                            padding: 12px;
-                        }
-                        .info-left, .info-right { 
-                            width: 48%; 
-                        }
-                        .info-row { 
-                            margin-bottom: 10px; 
-                            font-size: 14px;
-                        }
-                        .label { 
-                            font-weight: bold; 
-                            display: inline-block; 
-                            width: 100px;
-                        }
-                        table { 
-                            width: 100%; 
-                            border-collapse: collapse; 
-                            margin-bottom: 20px;
-                            border: 2px solid #000;
-                        }
-                        th, td { 
-                            border: 1px solid #000; 
-                            padding: 10px; 
-                            text-align: left;
-                            font-size: 13px;
-                            font-family: Arial, sans-serif;
-                        }
-                        th { 
-                            background-color: white; 
-                            color: #000000;
-                            font-weight: bold;
-                            text-align: center;
-                            font-size: 14px;
-                            border: 2px solid #000;
-                        }
-                        .subtotal-row {
-                            background-color: #f0f0f0;
-                            font-weight: bold;
-                            border-top: 3px solid #000;
-                        }
-                        .total-section {
-                            border: 2px solid #000;
-                            padding: 15px;
-                            margin-bottom: 20px;
-                            background-color: #f9f9f9;
-                        }
-                        .additional-notes-section {
-                            margin-top: 20px;
-                            padding: 15px;
-                            background-color: #f9f9f9;
-                            border: 1px solid #ddd;
-                            border-radius: 5px;
-                        }
-                        .additional-notes-title {
-                            font-weight: bold;
-                            margin-bottom: 10px;
-                            color: #333;
-                        }
-                        .additional-notes-content {
-                            white-space: pre-wrap;
-                            line-height: 1.6;
-                        }
-                        .footer {
-                            margin-top: 40px;
-                            display: flex;
-                            justify-content: space-between;
-                        }
-                        .signature-box {
-                            width: 200px;
-                            text-align: center;
-                        }
-                        .signature-line {
-                            border-top: 1px solid #000;
-                            margin-top: 50px;
-                            padding-top: 5px;
-                        }
-                        @media print {
-                            body { margin: 0; }
-                            .no-print { display: none; }
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="header" style="
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    border-bottom: 2px solid #000; 
-    padding-bottom: 10px; 
-    margin-bottom: 20px;
-">
-    <!-- Left side: Square Logo -->
-    <div style="flex: 0 0 120px; text-align: center;">
-        <div style="
-            width: 100px;
-            height: 100px;
-            border: 2px solid #2c5530;
-            border-radius: 0%; /* ← এখানে গোলের পরিবর্তে চারকোণা */
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: #fff;
-            margin: 0 auto;
-        ">
-            <img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" 
-                 alt="Company Logo" 
-                 style="width: 90%; height: 90%; object-fit: contain;">
-        </div>
-    </div>
-
-    <!-- Center: Company name and address -->
-    <div style="flex: 1; text-align: center;">
-        <div class="company-name" style="
-            font-size: 26px; 
-            font-weight: bold; 
-            color: #2c5530;
-            margin-bottom: 5px;
-        ">GMS COMPOSITE KNITTING IND LTD</div>
-
-        <div class="company-address" style="
-            font-size: 15px; 
-            color: #444;
-            margin-bottom: 5px;
-        ">Sardagonj, Kashimpur, Gazipur</div>
-
-        <div style="
-            font-size: 17px; 
-            font-weight: bold; 
-            color: #2c5530;
-            margin: 5px 0;
-        ">FINISH FABRIC MCD</div>
-
-        <div class="challan-title" style="
-            font-size: 20px; 
-            font-weight: bold; 
-            text-decoration: underline;
-        ">BILL</div>
-    </div>
-
-    <!-- Right side blank for symmetry -->
-    <div style="flex: 0 0 120px;"></div>
-</div>
-
-
-                    <div class="info-section">
-                        <div class="info-left">
-                            <div class="info-row">
-                                <span class="label">Bill No:</span>
-                                <span>${billNumber}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Challan No:</span>
-                                <span>${challan.challanNumber}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Date:</span>
-                                <span>${new Date(challan.invoiceDate).toLocaleDateString('en-GB')}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Issue To:</span>
-                                <span>${challan.issueTo}</span>
-                            </div>
-                        </div>
-                        <div class="info-right">
-                            <div class="info-row">
-                                <span class="label">Receiver:</span>
-                                <span>${challan.receiverName}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Contact:</span>
-                                <span>${challan.contactNumber || 'N/A'}</span>
-                            </div>
-                            <div class="info-row">
-                                <span class="label">Time:</span>
-                                <span>${new Date().toLocaleTimeString('en-GB', {hour12: false})}</span>
-                            </div>
-                        </div>
-                    </div>
-
-                    ${challan.gmsFields ? `
-                    <div class="info-section" style="margin-bottom: 20px;">
-                        <div style="width: 100%;">
-                            <div style="font-weight: bold; margin-bottom: 10px; text-align: center; background-color: #f0f8ff; padding: 8px;">
-                                🚛 TRANSPORT & DELIVERY DETAILS
-                            </div>
-                            <div style="display: flex; flex-wrap: wrap; gap: 15px;">
-                                <div style="flex: 2; min-width: 200px;">
-                                    <span class="label">Party Address:</span>
-                                    <span>${challan.gmsFields.partyAddress || 'N/A'}</span>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <span class="label">Driver Name:</span>
-                                    <span>${challan.gmsFields.driverName || 'N/A'}</span>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <span class="label">Vehicle No:</span>
-                                    <span>${challan.gmsFields.vehicleNo || 'N/A'}</span>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <span class="label">Gate Pass No:</span>
-                                    <span>${challan.gmsFields.gatePassNo || 'N/A'}</span>
-                                </div>
-                                <div style="flex: 1; min-width: 150px;">
-                                    <span class="label">Lock No:</span>
-                                    <span>${challan.gmsFields.lockNo || 'N/A'}</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    ` : ''}
-
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width: 30px; background-color: white; color: #000000; font-family: Arial, sans-serif;">SL</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Issue Type</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Buyer</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Store Ref</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Certification</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Dia</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">F/Type</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">GSM</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Color</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Batch No</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Location</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Rolls</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">UOM</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Grey Qty</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Rate</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Amount</th>
-                                <th style="background-color: white; color: #000000; font-family: Arial, sans-serif;">Remarks</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            ${challan.items.map((item, index) => {
-                                const itemCurrencySymbol = item.currency === 'USD' ? '$' : '৳';
-                                return `
-                                <tr style="background-color: ${index % 2 === 0 ? '#D6EEEE' : 'white'};">
-                                    <td style="text-align: center; font-family: Arial, sans-serif;">${index + 1}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.issueType || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.buyer || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.storeRef || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.certification || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.dia || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.fabricType || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.gsm || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.color || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.batchNo || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.location || '-'}</td>
-                                    <td style="text-align: center; font-family: Arial, sans-serif;">${item.rolls || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.uom || '-'}</td>
-                                    <td style="text-align: right; font-family: Arial, sans-serif;">${item.greyQty || '-'}</td>
-                                    <td style="text-align: right; font-family: Arial, sans-serif;">${itemCurrencySymbol} ${item.rate || '-'}</td>
-                                    <td style="text-align: right; font-family: Arial, sans-serif;">${itemCurrencySymbol} ${item.amount || '-'}</td>
-                                    <td style="font-family: Arial, sans-serif;">${item.remarks || '-'}</td>
-                                </tr>
-                                `}).join('')}
-                            <tr class="subtotal-row">
-                                <td colspan="11" style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">SUBTOTAL:</td>
-                                <td style="text-align: center; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseInt(item.rolls) || 0), 0)}</td>
-                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">-</td>
-                                <td style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.greyQty) || 0), 0).toFixed(2)}</td>
-                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">-</td>
-                                <td style="text-align: right; padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">${currencySymbol} ${totalAmount.toFixed(2)}</td>
-                                <td style="padding: 12px; font-family: Arial, sans-serif; border: 2px solid #000;">Total Items: ${challan.items.length}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="total-section">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                            <div style="font-size: 16px; font-weight: bold;">
-                                Total Amount: ${currencySymbol} ${totalAmount.toFixed(2)}
-                            </div>
-                        </div>
-                        <div style="font-size: 14px; font-weight: bold; border-top: 1px solid #000; padding-top: 10px;">
-                            Amount In Words: ${numberToWords(totalAmount, currencyType)}
-                        </div>
-                    </div>
-
-                    ${challan.additionalNotes && challan.additionalNotes.trim() !== '' ? `
-                    <div class="additional-notes-section">
-                        <div class="additional-notes-title">Additional Notes:</div>
-                        <div class="additional-notes-content">${challan.additionalNotes}</div>
-                    </div>
-                    ` : ''}
-
-                    <div class="footer">
-                        <div class="signature-box">
-                            <div class="signature-line">Prepared By</div>
-                        </div>
-                        <div class="signature-box">
-                            <div class="signature-line">Received By</div>
-                        </div>
-                        <div class="signature-box">
-                            <div class="signature-line">Checked By</div>
-                        </div>
-                        <div class="signature-box">
-                            <div class="signature-line">AGM MCD</div>
-                        </div>
-                        <div class="signature-box">
-                            <div class="signature-line">Approved By</div>
-                        </div>
-                    </div>
-
-                    <div style="text-align: center; margin-top: 30px; font-size: 10px; color: #666;">
-                        Generated on: ${new Date().toLocaleString('en-GB')}
-                    </div>
-
-                    <button onclick="window.print()" class="no-print" style="position: fixed; top: 10px; right: 10px; padding: 10px 20px; background: #059669; color: white; border: none; border-radius: 5px; cursor: pointer;">Print</button>
-                </body>
-                </html>
-            `;
-
-            printWindow.document.write(printContent);
-            printWindow.document.close();
+            
+            await updateBillCounter();
+            billCounter++;
+        } catch (error) {
+            console.error('Error updating bill number:', error);
         }
+    }
 
+    // Calculate total amount and determine currency
+    const totalAmount = challan.items.reduce((sum, item) => sum + (parseFloat(item.amount) || 0), 0);
+    const currencyType = challan.items.length > 0 ? (challan.items[0].currency || 'BDT') : 'BDT';
+    const currencySymbol = currencyType === 'USD' ? '$' : '৳';
+
+
+    const printWindow = window.open('', '_blank');
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Bill - ${billNumber}</title>
+            <style>
+                body { 
+                    font-family: 'Times New Roman', serif; 
+                    margin: 0; 
+                    padding: 15px; 
+                    font-size: 12px; /* ফন্ট সাইজ ১৪ থেকে কমিয়ে ১২ করা হয়েছে */
+                    line-height: 1.1; /* লাইন স্পেস কমানো হয়েছে */
+                }
+                .header { 
+                    text-align: center; 
+                    border-bottom: 1px solid #000; 
+                    padding-bottom: 5px; 
+                    margin-bottom: 10px;
+                }
+                .company-name { 
+                    font-size: 22px; /* সাইজ কমানো হয়েছে */
+                    font-weight: bold; 
+                    margin-bottom: 2px;
+                    color: #2c5530;
+                }
+                .company-address { 
+                    font-size: 13px; 
+                    color: #666;
+                    margin-bottom: 5px;
+                }
+                .bill-title {
+                    font-size: 18px;
+                    font-weight: bold;
+                    text-decoration: underline;
+                    margin-top: 5px;
+                }
+                .info-section { 
+                    display: flex; 
+                    justify-content: space-between; 
+                    margin-bottom: 10px; /* মার্জিন ২০ থেকে ১০ করা হয়েছে */
+                    border: 1px solid #000;
+                    padding: 5px 10px; /* প্যাডিং কমানো হয়েছে */
+                }
+                .info-left, .info-right { 
+                    width: 48%; 
+                }
+                .info-row { 
+                    margin-bottom: 2px; /* লাইনের মাঝের গ্যাপ কমানো হয়েছে */
+                    font-size: 12px;
+                }
+                .label { 
+                    font-weight: bold; 
+                    display: inline-block; 
+                    width: 90px;
+                }
+                table { 
+                    width: 100%; 
+                    border-collapse: collapse; 
+                    margin-bottom: 10px;
+                    border: 1px solid #000;
+                }
+                th, td { 
+                    border: 1px solid #000; 
+                    padding: 3px 5px; /* টেবিলের সেলের প্যাডিং ১০ থেকে কমিয়ে ৩ করা হয়েছে */
+                    text-align: left;
+                    font-size: 11px; /* টেবিলের লেখা ছোট করা হয়েছে */
+                    font-family: Arial, sans-serif;
+                }
+                th { 
+                    background-color: #f0f0f0; 
+                    color: #000000;
+                    font-weight: bold;
+                    text-align: center;
+                    font-size: 11px;
+                }
+                .subtotal-row {
+                    background-color: #f0f0f0;
+                    font-weight: bold;
+                    border-top: 2px solid #000;
+                }
+                .total-section {
+                    border: 1px solid #000;
+                    padding: 8px;
+                    margin-bottom: 10px;
+                    background-color: #f9f9f9;
+                }
+                .additional-notes-section {
+                    margin-top: 10px;
+                    padding: 8px;
+                    background-color: #f9f9f9;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                }
+                .additional-notes-title {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    font-size: 11px;
+                    color: #333;
+                }
+                .additional-notes-content {
+                    white-space: pre-wrap;
+                    line-height: 1.2;
+                    font-size: 11px;
+                }
+                .footer {
+                    margin-top: 20px;
+                    display: flex;
+                    justify-content: space-between;
+                }
+                .signature-box {
+                    width: 150px;
+                    text-align: center;
+                }
+                .signature-line {
+                    border-top: 1px solid #000;
+                    margin-top: 30px;
+                    padding-top: 2px;
+                    font-size: 11px;
+                }
+                @media print {
+                    body { margin: 0; padding: 10px; }
+                    .no-print { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <div class="header" style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #000; padding-bottom: 5px; margin-bottom: 10px;">
+                <!-- Left side: Square Logo (Size Reduced) -->
+                <div style="flex: 0 0 80px; text-align: center;">
+                    <div style="width: 70px; height: 70px; border: 1px solid #2c5530; overflow: hidden; display: flex; align-items: center; justify-content: center; background-color: #fff; margin: 0 auto;">
+                        <img src="https://logic.gmsbd.com/platform/file_upload/company_details_1_5639_0.jpg" alt="Company Logo" style="width: 90%; height: 90%; object-fit: contain;">
+                    </div>
+                </div>
+
+                <!-- Center: Company name and address -->
+                <div style="flex: 1; text-align: center;">
+                    <div class="company-name">GMS COMPOSITE KNITTING IND LTD</div>
+                    <div class="company-address">Sardagonj, Kashimpur, Gazipur</div>
+                    <div style="font-size: 14px; font-weight: bold; color: #2c5530; margin: 2px 0;">FINISH FABRIC MCD</div>
+                    <div class="bill-title">BILL</div>
+                </div>
+
+                <!-- Right side blank for symmetry -->
+                <div style="flex: 0 0 80px;"></div>
+            </div>
+
+
+            <div class="info-section">
+                <div class="info-left">
+                    <div class="info-row"><span class="label">Bill No:</span><span>${billNumber}</span></div>
+                    <div class="info-row"><span class="label">Challan No:</span><span>${challan.challanNumber}</span></div>
+                    <div class="info-row"><span class="label">Date:</span><span>${new Date(challan.invoiceDate).toLocaleDateString('en-GB')}</span></div>
+                    <div class="info-row"><span class="label">Issue To:</span><span>${challan.issueTo}</span></div>
+                </div>
+                <div class="info-right">
+                    <div class="info-row"><span class="label">Receiver:</span><span>${challan.receiverName}</span></div>
+                    <div class="info-row"><span class="label">Contact:</span><span>${challan.contactNumber || 'N/A'}</span></div>
+                    <div class="info-row"><span class="label">Time:</span><span>${new Date().toLocaleTimeString('en-GB', {hour12: false})}</span></div>
+                </div>
+            </div>
+
+            ${challan.gmsFields ? `
+            <div class="info-section" style="margin-bottom: 10px;">
+                <div style="width: 100%;">
+                    <div style="font-weight: bold; margin-bottom: 5px; text-align: center; background-color: #f0f8ff; padding: 2px; font-size: 11px;">
+                        🚛 TRANSPORT & DELIVERY DETAILS
+                    </div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; font-size: 11px;">
+                        <div style="flex: 2; min-width: 150px;"><span class="label" style="width: 80px;">Address:</span><span>${challan.gmsFields.partyAddress || 'N/A'}</span></div>
+                        <div style="flex: 1; min-width: 120px;"><span class="label" style="width: 60px;">Driver:</span><span>${challan.gmsFields.driverName || 'N/A'}</span></div>
+                        <div style="flex: 1; min-width: 120px;"><span class="label" style="width: 60px;">Vehicle:</span><span>${challan.gmsFields.vehicleNo || 'N/A'}</span></div>
+                        <div style="flex: 1; min-width: 120px;"><span class="label" style="width: 60px;">G.Pass:</span><span>${challan.gmsFields.gatePassNo || 'N/A'}</span></div>
+                    </div>
+                </div>
+            </div>
+            ` : ''}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25px;">SL</th>
+                        <th>Issue Type</th>
+                        <th>Buyer</th>
+                        <th>Store Ref</th>
+                        <th>Cert</th>
+                        <th>Dia</th>
+                        <th>F/Type</th>
+                        <th>GSM</th>
+                        <th>Color</th>
+                        <th>Batch No</th>
+                        <th>Loc</th>
+                        <th>Rolls</th>
+                        <th>UOM</th>
+                        <th>Grey Qty</th>
+                        <th>Rate</th>
+                        <th>Amount</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${challan.items.map((item, index) => {
+                        const itemCurrencySymbol = item.currency === 'USD' ? '$' : '৳';
+                        return `
+                        <tr style="background-color: ${index % 2 === 0 ? '#f9f9f9' : 'white'};">
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td>${item.issueType || '-'}</td>
+                            <td>${item.buyer || '-'}</td>
+                            <td>${item.storeRef || '-'}</td>
+                            <td>${item.certification || '-'}</td>
+                            <td>${item.dia || '-'}</td>
+                            <td>${item.fabricType || '-'}</td>
+                            <td>${item.gsm || '-'}</td>
+                            <td>${item.color || '-'}</td>
+                            <td>${item.batchNo || '-'}</td>
+                            <td>${item.location || '-'}</td>
+                            <td style="text-align: center;">${item.rolls || '-'}</td>
+                            <td>${item.uom || '-'}</td>
+                            <td style="text-align: right;">${item.greyQty || '-'}</td>
+                            <td style="text-align: right;">${itemCurrencySymbol} ${item.rate || '-'}</td>
+                            <td style="text-align: right;">${itemCurrencySymbol} ${item.amount || '-'}</td>
+                            <td>${item.remarks || '-'}</td>
+                        </tr>
+                        `}).join('')}
+                    <tr class="subtotal-row">
+                        <td colspan="11" style="text-align: right; padding: 4px; border: 1px solid #000;">SUBTOTAL:</td>
+                        <td style="text-align: center; padding: 4px; border: 1px solid #000;">${challan.items.reduce((sum, item) => sum + (parseInt(item.rolls) || 0), 0)}</td>
+                        <td style="padding: 4px; border: 1px solid #000;">-</td>
+                        <td style="text-align: right; padding: 4px; border: 1px solid #000;">${challan.items.reduce((sum, item) => sum + (parseFloat(item.greyQty) || 0), 0).toFixed(2)}</td>
+                        <td style="padding: 4px; border: 1px solid #000;">-</td>
+                        <td style="text-align: right; padding: 4px; border: 1px solid #000;">${currencySymbol} ${totalAmount.toFixed(2)}</td>
+                        <td style="padding: 4px; border: 1px solid #000; font-size: 10px;">Items: ${challan.items.length}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="total-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                    <div style="font-size: 14px; font-weight: bold;">
+                        Total Amount: ${currencySymbol} ${totalAmount.toFixed(2)}
+                    </div>
+                </div>
+                <div style="font-size: 12px; font-weight: bold; border-top: 1px solid #ccc; padding-top: 5px;">
+                    Amount In Words: ${numberToWords(totalAmount, currencyType)}
+                </div>
+            </div>
+
+            ${challan.additionalNotes && challan.additionalNotes.trim() !== '' ? `
+            <div class="additional-notes-section">
+                <div class="additional-notes-title">Additional Notes:</div>
+                <div class="additional-notes-content">${challan.additionalNotes}</div>
+            </div>
+            ` : ''}
+
+            <div class="footer">
+                <div class="signature-box"><div class="signature-line">Prepared By</div></div>
+                <div class="signature-box"><div class="signature-line">Received By</div></div>
+                <div class="signature-box"><div class="signature-line">Checked By</div></div>
+                <div class="signature-box"><div class="signature-line">AGM MCD</div></div>
+                <div class="signature-box"><div class="signature-line">Approved By</div></div>
+            </div>
+
+            <div style="text-align: center; margin-top: 20px; font-size: 9px; color: #666;">
+                Generated on: ${new Date().toLocaleString('en-GB')}
+            </div>
+
+            <button onclick="window.print()" class="no-print" style="position: fixed; top: 10px; right: 10px; padding: 8px 15px; background: #059669; color: white; border: none; border-radius: 4px; cursor: pointer;">Print</button>
+        </body>
+        </html>
+    `;
+
+    printWindow.document.write(printContent);
+    printWindow.document.close();
+}
         // Delete challan
         async function deleteChallan(challanNumber) {
             if (confirm(`Are you sure you want to delete challan ${challanNumber}?`)) {
@@ -3215,8 +3022,102 @@ async function createChallan(event) {
              checkLoginStatus();
           monitorConnection();
 });
+      // ########## START: DATABASE SEARCH FUNCTIONALITY ##########
+
+// ১. ডাটাবেজ থেকে নির্দিষ্ট চালান খোঁজার ফাংশন
+async function searchChallanFromDatabase() {
+    const searchInput = document.getElementById('recentChallanSearchInput');
+    const searchTerm = searchInput.value.trim();
+    const tableBody = document.getElementById('challansTable');
+
+    // ইনপুট খালি থাকলে ওয়ার্নিং দিবে
+    if (!searchTerm) {
+        alert("Please enter a Challan Number to search!");
+        return;
+    }
+
+    // লোডিং দেখানো
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-blue-600 font-bold">
+                Searching inside Database... Please wait...
+            </td>
+        </tr>
+    `;
+
+    try {
+        const challansRef = window.dbRef(window.database, 'challans');
+        
+        // কুয়েরি তৈরি: ChallanNumber দিয়ে ডাটাবেজে খোঁজা হবে
+        const searchQuery = window.dbQuery(
+            challansRef, 
+            window.dbOrderByChild('challanNumber'), 
+            window.dbEqualTo(searchTerm)
+        );
+
+        const snapshot = await window.dbGet(searchQuery);
+
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            // ডাটা অবজেক্ট থেকে অ্যারেতে কনভার্ট করা
+            challans = Object.values(data);
+            
+            // টেবিল আপডেট করা
+            updateChallansTable();
+            
+            // ইউজারকে ফিডব্যাক দেওয়া
+            const notification = document.getElementById('updateNotification');
+            notification.innerHTML = `<div class="flex items-center space-x-2"><span>Found: ${challans.length} challan(s)</span></div>`;
+            showUpdateNotification();
+        } else {
+            // যদি না পাওয়া যায়
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-6 py-8 text-center text-red-500 font-bold">
+                        No Data Found for Challan No: "${searchTerm}"
+                    </td>
+                </tr>
+            `;
+            // গ্লোবাল অ্যারে খালি করে দেওয়া যাতে কনফিউশন না হয়
+            challans = [];
+        }
+
+    } catch (error) {
+        console.error("Search Error:", error);
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-8 text-center text-red-600">
+                    Error searching database. Check internet or Indexing rules.
+                </td>
+            </tr>
+        `;
+    }
+}
+
+// ২. রিসেট বাটন (আবার আগের মতো রিসেন্ট ২০০ ডাটা দেখানোর জন্য)
+function resetChallanTable() {
+    document.getElementById('recentChallanSearchInput').value = '';
+    const tableBody = document.getElementById('challansTable');
+    
+    tableBody.innerHTML = `
+        <tr>
+            <td colspan="6" class="px-6 py-8 text-center text-textSecondary">
+                Reloading recent data...
+            </td>
+        </tr>
+    `;
+    
+    // আবার রিয়েলটাইম লিসেনার চালু করে দেওয়া, এতে অটোমেটিক রিসেন্ট ডাটা লোড হবে
+    setupRealtimeListener();
+}
+
+// ########## END: DATABASE SEARCH FUNCTIONALITY ##########
     </script>
 </body>
+</html>
+    
+  </body>
+  
 </html>
     
   </body>
