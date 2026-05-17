@@ -1101,13 +1101,22 @@ window.onAuthStateChanged = onAuthStateChanged;
                         </div>
                         <h3 class="text-lg font-bold text-slate-800">Recent Challans</h3>
                     </div>
-                    <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-2 flex-wrap">
                         <input type="text" id="recentChallanSearchInput" placeholder="Search challan no..."
                             class="form-input w-48 text-sm" onkeydown="if(event.key==='Enter')searchChallanFromDatabase()">
                         <button onclick="searchChallanFromDatabase()" class="btn btn-sm btn-info">
                             <i class="fas fa-search"></i> Find
                         </button>
-                        <button onclick="resetChallanTable()" class="btn btn-sm btn-ghost" title="Reload">
+                        <div class="flex items-center gap-1 border-l border-slate-200 pl-2 ml-1">
+                            <label class="text-xs text-slate-500 font-semibold">From:</label>
+                            <input type="date" id="recentStartDate" class="form-input text-sm py-2">
+                            <label class="text-xs text-slate-500 font-semibold">To:</label>
+                            <input type="date" id="recentEndDate" class="form-input text-sm py-2">
+                            <button onclick="applyRecentDateFilter()" class="btn btn-sm btn-accent" title="Filter by Date">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                        </div>
+                        <button onclick="resetChallanTable()" class="btn btn-sm btn-ghost" title="Reload All">
                             <i class="fas fa-sync-alt"></i>
                         </button>
                     </div>
@@ -1166,15 +1175,10 @@ window.onAuthStateChanged = onAuthStateChanged;
                             <option value="AOP">AOP</option><option value="Dyeing Return">Dyeing Return</option>
                             <option value="Sample Department">Sample Department</option>
                         </select>
-                        <select id="dateRangeFilter" onchange="handleDateRangeChange()" class="form-input w-auto text-sm py-2">
-                            <option value="">All Dates</option>
-                            <option value="today">Today</option><option value="yesterday">Yesterday</option>
-                            <option value="last7days">Last 7 Days</option><option value="last30days">Last 30 Days</option>
-                            <option value="thisMonth">This Month</option><option value="lastMonth">Last Month</option>
-                            <option value="custom">Custom Range</option>
-                        </select>
-                        <div id="customDateRange" class="hidden flex gap-2">
+                        <div class="flex items-center gap-1">
+                            <label class="text-xs text-slate-500 font-semibold">From:</label>
                             <input type="date" id="startDate" class="form-input text-sm py-2">
+                            <label class="text-xs text-slate-500 font-semibold">To:</label>
                             <input type="date" id="endDate" class="form-input text-sm py-2">
                         </div>
                         <button onclick="applyFilters()" class="btn btn-sm btn-accent"><i class="fas fa-search"></i> Generate Report</button>
@@ -1216,7 +1220,7 @@ window.onAuthStateChanged = onAuthStateChanged;
         <!-- Developer Credit -->
         <div class="text-center py-6 mt-8 border-t border-slate-200 no-print">
             <p class="text-xs text-slate-400">
-                Developed by: <span class="font-bold text-emerald-500">S@ju.<sup class="text-xs">TM</sup></span> | GMS FINISH FABRIC MCD V-3.2
+                Developed by: <span class="font-bold text-emerald-500">S@ju.<sup class="text-xs">TM</sup></span> | GMS FINISH FABRIC MCD V-3.4
             </p>
         </div>
     </main>
@@ -1281,6 +1285,8 @@ let isInitialLoad = true;
 const PAGE_SIZE = 20;
 let currentPage = 1;
 let allChallansForTable = [];
+let reportRequestId = 0; // To prevent race conditions in async report loading
+let lastReportData = null; // Cache the full data for export
 
 // ===================== TOAST NOTIFICATION SYSTEM =====================
 function showToast(message, type = 'info', duration = 4000) {
@@ -1483,7 +1489,12 @@ function generateChallanNumber() {
 }
 
 function setCurrentDate() {
-    document.getElementById('invoiceDate').value = new Date().toISOString().split('T')[0];
+    // Use local date instead of UTC to avoid timezone issues
+    const now = new Date();
+    const y = now.getFullYear();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    document.getElementById('invoiceDate').value = `${y}-${m}-${d}`;
 }
 
 // ===================== REAL-TIME LISTENER (OPTIMIZED) =====================
@@ -2095,51 +2106,113 @@ function updateIssueReport() {
     const tbody = document.getElementById('issueReportTable');
     tbody.innerHTML = `<tr><td colspan="11" class="px-6 py-16 text-center text-slate-400">
         <i class="fas fa-filter text-4xl mb-3 block" style="color:#94a3b8;"></i>
-        <div class="text-base font-semibold mb-1" style="color:#64748b;">Select filters & click "Generate Report"</div>
-        <div class="text-xs" style="color:#94a3b8;">Choose an Issue Destination or Date Range, then press Generate Report to load data.</div>
+        <div class="text-base font-semibold mb-1" style="color:#64748b;">Select date range & click "Generate Report"</div>
+        <div class="text-xs" style="color:#94a3b8;">Choose a From and To date, then press Generate Report to load data.</div>
     </td></tr>`;
 }
 
 // ===================== FILTERS =====================
-function handleDateRangeChange() {
-    const val = document.getElementById('dateRangeFilter').value;
-    const custom = document.getElementById('customDateRange');
-    if (val === 'custom') {
-        custom.classList.remove('hidden');
-        const today = new Date();
-        const lastWeek = new Date(today.getTime() - 7*24*60*60*1000);
-        document.getElementById('startDate').value = lastWeek.toISOString().split('T')[0];
-        document.getElementById('endDate').value = today.toISOString().split('T')[0];
-    } else { custom.classList.add('hidden'); }
-    applyFilters();
+function toLocalDateStr(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
 }
 
-function getDateRange(val) {
-    const today = new Date();
-    const todayStr = today.toISOString().split('T')[0];
-    switch (val) {
-        case 'today': return { start: todayStr, end: todayStr };
-        case 'yesterday': const y = new Date(today.getTime()-86400000); return { start: y.toISOString().split('T')[0], end: y.toISOString().split('T')[0] };
-        case 'last7days': return { start: new Date(today.getTime()-7*86400000).toISOString().split('T')[0], end: todayStr };
-        case 'last30days': return { start: new Date(today.getTime()-30*86400000).toISOString().split('T')[0], end: todayStr };
-        case 'thisMonth': return { start: new Date(today.getFullYear(),today.getMonth(),1).toISOString().split('T')[0], end: todayStr };
-        case 'lastMonth': const lm = new Date(today.getFullYear(),today.getMonth()-1,1); const lme = new Date(today.getFullYear(),today.getMonth(),0); return { start: lm.toISOString().split('T')[0], end: lme.toISOString().split('T')[0] };
-        case 'custom': return { start: document.getElementById('startDate').value, end: document.getElementById('endDate').value };
-        default: return null;
-    }
+function normalizeDate(dateStr) {
+    if (!dateStr) return '';
+    // If already in YYYY-MM-DD format (10 chars), return as-is
+    if (dateStr.length === 10 && dateStr.includes('-')) return dateStr;
+    // If ISO format with time (e.g. "2025-01-15T10:30:00.000Z"), extract date part
+    if (dateStr.includes('T')) return dateStr.substring(0, 10);
+    // Try parsing as Date object and formatting
+    try {
+        const d = new Date(dateStr);
+        if (!isNaN(d.getTime())) {
+            return toLocalDateStr(d);
+        }
+    } catch(e) {}
+    return dateStr; // fallback
 }
 
 function applyFilters() {
     const issueFilter = document.getElementById('issueDestinationFilter').value;
-    const dateRangeFilter = document.getElementById('dateRangeFilter').value;
-    const dateRange = getDateRange(dateRangeFilter);
-    const tbody = document.getElementById('issueReportTable');
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
     
+    // Validate: both dates must be filled
+    if (!startDate || !endDate) {
+        showToast('Please select both From and To dates.', 'warning');
+        return;
+    }
+    if (startDate > endDate) {
+        showToast('From date cannot be after To date.', 'warning');
+        return;
+    }
+    
+    const dateRange = { start: startDate, end: endDate };
+    
+    // Always load all data from Firebase for accurate filtering
+    // because limitToLast(200) may not include older data
+    loadAllChallansForReport(issueFilter, dateRange);
+}
+
+async function loadAllChallansForReport(issueFilter, dateRange) {
+    // Increment request ID to prevent race conditions
+    const thisRequestId = ++reportRequestId;
+    
+    const tbody = document.getElementById('issueReportTable');
+    tbody.innerHTML = `<tr><td colspan="11" class="px-6 py-12 text-center text-blue-500">
+        <i class="fas fa-spinner fa-spin text-2xl mb-2 block"></i>
+        <div class="text-sm font-semibold">Loading full data from database...</div>
+        <div class="text-xs text-slate-400 mt-1">This may take a moment for large datasets</div>
+    </td></tr>`;
+    
+    try {
+        const challansRef = window.dbRef(window.database, 'challans');
+        const snapshot = await window.dbGet(challansRef);
+        
+        // Check if a newer request has been made - discard this result if so
+        if (thisRequestId !== reportRequestId) return;
+        
+        if (snapshot.exists()) {
+            const firebaseChallans = snapshot.val();
+            const allChallans = Object.values(firebaseChallans);
+            allChallans.sort((a, b) => {
+                const da = normalizeDate(a.invoiceDate) || '';
+                const db2 = normalizeDate(b.invoiceDate) || '';
+                return db2.localeCompare(da);
+            });
+            
+            // Cache for export function
+            lastReportData = allChallans;
+            
+            filterAndRenderReport(issueFilter, dateRange, allChallans);
+        } else {
+            lastReportData = [];
+            filterAndRenderReport(issueFilter, dateRange, []);
+        }
+    } catch (error) {
+        console.error('Error loading all challans:', error);
+        // Only render if this is still the latest request
+        if (thisRequestId !== reportRequestId) return;
+        filterAndRenderReport(issueFilter, dateRange);
+    }
+}
+
+function filterAndRenderReport(issueFilter, dateRange, customChallans) {
+    const tbody = document.getElementById('issueReportTable');
+    const dataSource = customChallans || challans;
     const allItems = [];
     const seen = new Set();
     
-    challans.forEach(challan => {
+    console.log('[filterAndRenderReport] Date range:', JSON.stringify(dateRange), 'Issue filter:', issueFilter, 'Data source count:', dataSource.length);
+    
+    dataSource.forEach(challan => {
         if (!challan.items) return;
+        const challanDate = normalizeDate(challan.invoiceDate);
+        console.log('[filter] Challan:', challan.challanNumber, 'raw invoiceDate:', challan.invoiceDate, 'normalized:', challanDate, 'in range:', (challanDate && dateRange && dateRange.start && dateRange.end) ? (challanDate >= dateRange.start && challanDate <= dateRange.end) : 'no range');
+        
         challan.items.forEach((item, index) => {
             const uid = `${challan.challanNumber}-${index}`;
             if (seen.has(uid)) return;
@@ -2148,16 +2221,19 @@ function applyFilters() {
             let include = true;
             if (issueFilter && challan.issueTo !== issueFilter) include = false;
             if (dateRange && dateRange.start && dateRange.end) {
-                const d = new Date(challan.invoiceDate);
-                if (d < new Date(dateRange.start) || d > new Date(dateRange.end)) include = false;
+                if (!challanDate || challanDate < dateRange.start || challanDate > dateRange.end) {
+                    include = false;
+                }
             }
             if (include) allItems.push({ ...item, issueDestination: challan.issueTo, challanNumber: challan.challanNumber, date: challan.invoiceDate });
         });
     });
     
+    console.log('[filterAndRenderReport] Filtered items count:', allItems.length);
+    
     if (allItems.length === 0) {
         tbody.innerHTML = `<tr><td colspan="11" class="px-6 py-12 text-center text-slate-400">
-            ${issueFilter||dateRangeFilter ? 'No data matches the selected filters.' : 'No data available.'}</td></tr>`;
+            ${issueFilter||dateRange ? 'No data matches the selected filters.' : 'No data available.'}</td></tr>`;
         return;
     }
     
@@ -2180,28 +2256,44 @@ function applyFilters() {
 
 function clearAllFilters() {
     document.getElementById('issueDestinationFilter').value = '';
-    document.getElementById('dateRangeFilter').value = '';
-    document.getElementById('customDateRange').classList.add('hidden');
     document.getElementById('startDate').value = '';
     document.getElementById('endDate').value = '';
     // Reset report to placeholder
     const tbody = document.getElementById('issueReportTable');
     tbody.innerHTML = `<tr><td colspan="11" class="px-6 py-16 text-center text-slate-400">
         <i class="fas fa-filter text-4xl mb-3 block" style="color:#94a3b8;"></i>
-        <div class="text-base font-semibold mb-1" style="color:#64748b;">Select filters & click "Generate Report"</div>
-        <div class="text-xs" style="color:#94a3b8;">Choose an Issue Destination or Date Range, then press Generate Report to load data.</div>
+        <div class="text-base font-semibold mb-1" style="color:#64748b;">Select date range & click "Generate Report"</div>
+        <div class="text-xs" style="color:#94a3b8;">Choose a From and To date, then press Generate Report to load data.</div>
     </td></tr>`;
 }
 
 // ===================== EXPORT REPORT =====================
-function exportIssueReport() {
+async function exportIssueReport() {
     const issueFilter = document.getElementById('issueDestinationFilter').value;
-    const dateRangeFilter = document.getElementById('dateRangeFilter').value;
-    const dateRange = getDateRange(dateRangeFilter);
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const dateRange = (startDate && endDate) ? { start: startDate, end: endDate } : null;
     const allItems = [];
     const seen = new Set();
     
-    challans.forEach(challan => {
+    // Use cached full data if available, otherwise fetch from Firebase
+    let dataSource = lastReportData;
+    if (!dataSource) {
+        try {
+            const challansRef = window.dbRef(window.database, 'challans');
+            const snapshot = await window.dbGet(challansRef);
+            if (snapshot.exists()) {
+                dataSource = Object.values(snapshot.val());
+            } else {
+                dataSource = [];
+            }
+        } catch (error) {
+            console.error('Error loading data for export:', error);
+            dataSource = challans; // fallback to cached
+        }
+    }
+    
+    dataSource.forEach(challan => {
         if (!challan.items) return;
         challan.items.forEach((item, index) => {
             const uid = `${challan.challanNumber}-${index}`;
@@ -2210,8 +2302,8 @@ function exportIssueReport() {
             let include = true;
             if (issueFilter && challan.issueTo !== issueFilter) include = false;
             if (dateRange && dateRange.start && dateRange.end) {
-                const d = new Date(challan.invoiceDate);
-                if (d < new Date(dateRange.start) || d > new Date(dateRange.end)) include = false;
+                const challanDate = normalizeDate(challan.invoiceDate);
+                if (!challanDate || challanDate < dateRange.start || challanDate > dateRange.end) include = false;
             }
             if (include) allItems.push({ ...item, issueDestination: challan.issueTo, challanNumber: challan.challanNumber, date: challan.invoiceDate });
         });
@@ -2304,7 +2396,77 @@ async function searchChallanFromDatabase() {
 
 function resetChallanTable() {
     document.getElementById('recentChallanSearchInput').value = '';
+    document.getElementById('recentStartDate').value = '';
+    document.getElementById('recentEndDate').value = '';
     setupRealtimeListener();
+}
+
+// ===================== RECENT CHALLAN DATE FILTER =====================
+let recentFilterRequestId = 0;
+
+async function applyRecentDateFilter() {
+    const startDate = document.getElementById('recentStartDate').value;
+    const endDate = document.getElementById('recentEndDate').value;
+    
+    // Validate: both dates must be filled
+    if (!startDate || !endDate) {
+        showToast('Please select both From and To dates.', 'warning');
+        return;
+    }
+    if (startDate > endDate) {
+        showToast('From date cannot be after To date.', 'warning');
+        return;
+    }
+    
+    const dateRange = { start: startDate, end: endDate };
+    
+    const thisRequestId = ++recentFilterRequestId;
+    const tbody = document.getElementById('challansTable');
+    tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-blue-500 font-bold">
+        <i class="fas fa-spinner fa-spin mr-2"></i> Loading data for selected date range...</td></tr>`;
+    
+    try {
+        // Fetch ALL challans from Firebase (not just limitToLast 200)
+        const challansRef = window.dbRef(window.database, 'challans');
+        const snapshot = await window.dbGet(challansRef);
+        
+        if (thisRequestId !== recentFilterRequestId) return; // Race condition guard
+        
+        if (snapshot.exists()) {
+            const firebaseChallans = snapshot.val();
+            const allChallans = Object.values(firebaseChallans);
+            
+            // Filter by date range
+            const filteredChallans = allChallans.filter(challan => {
+                const challanDate = normalizeDate(challan.invoiceDate);
+                if (!challanDate) return false;
+                return challanDate >= dateRange.start && challanDate <= dateRange.end;
+            });
+            
+            filteredChallans.sort((a, b) => {
+                const da = new Date(a.createdAt || a.invoiceDate);
+                const db2 = new Date(b.createdAt || b.invoiceDate);
+                return db2 - da;
+            });
+            
+            // Update the table with filtered data
+            allChallansForTable = filteredChallans;
+            currentPage = 1;
+            renderChallansPage();
+            
+            showToast(`Found ${filteredChallans.length} challan(s) in selected date range.`, 'success');
+        } else {
+            allChallansForTable = [];
+            currentPage = 1;
+            renderChallansPage();
+            showToast('No challans found in the database.', 'warning');
+        }
+    } catch (error) {
+        console.error('Error filtering challans by date:', error);
+        if (thisRequestId !== recentFilterRequestId) return;
+        tbody.innerHTML = `<tr><td colspan="6" class="px-6 py-12 text-center text-red-500">
+            Error loading data. Please try again.</td></tr>`;
+    }
 }
 
 // ===================== PDF DOWNLOAD =====================
